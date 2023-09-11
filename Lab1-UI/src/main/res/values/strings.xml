@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Labs20232-Gr04</string>
+    <string name="personIcon" >Icono de perfil de usuario</string>
+
 </resources>
