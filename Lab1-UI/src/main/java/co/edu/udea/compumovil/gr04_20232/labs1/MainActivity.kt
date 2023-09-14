@@ -12,6 +12,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,13 +21,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material.icons.rounded.Face
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -49,8 +58,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import co.edu.udea.compumovil.gr04_20232.labs1.ui.theme.Labs20232Gr04Theme
 import java.util.Date
 
@@ -136,7 +147,9 @@ fun app() {
         }
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(bottom = 20.dp),
+
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -145,30 +158,106 @@ fun app() {
                 modifier = Modifier.size(48.dp)
 
             )
-            Text(text="Sexo")
+            Spacer(modifier = Modifier.width(20.dp))
+            Text(text = "Sexo")
+            Spacer(modifier = Modifier.width(16.dp))
             var sex by remember { mutableStateOf("female") }
-
-            
             RadioButton(
                 selected = sex === "female",
                 onClick = { sex = "female" }
             )
-            Text(text="Femenino")
-            
+            Text(text = "Femenino")
+
             RadioButton(
                 selected = sex === "male",
                 onClick = { sex = "male" }
             )
-            Text(text="Masculino")
+            Text(text = "Masculino")
+
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                Icons.Rounded.DateRange,
+                contentDescription = stringResource(id = R.string.personIcon),
+                modifier = Modifier.size(48.dp)
+
+            )
+            Spacer(modifier = Modifier.width(20.dp))
+            Text(text = "Fecha de Nacimiento:")
+            Spacer(modifier = Modifier.width(16.dp))
+            selectDatePicker();
+
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 20.dp),
+
+
+            verticalAlignment = Alignment.CenterVertically
+        )
+        {
+            Icon(
+                Icons.Rounded.Info,
+                contentDescription = stringResource(id = R.string.personIcon),
+                modifier = Modifier.size(48.dp)
+
+            )
+            Spacer(modifier = Modifier.width(20.dp))
+            GenderDropdownMenu();
+            Spacer(modifier = Modifier.width(16.dp))
+
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        )
+        {
+
+            Spacer(Modifier.weight(1f))
+            Button(
+                onClick = {
+                    // mDatePickerDialog.show()
+                },
+                modifier = Modifier.padding(30.dp),
+                contentPadding = PaddingValues(
+                    start = 20.dp,
+                    top = 12.dp,
+                    end = 20.dp,
+                    bottom = 12.dp
+                ),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan)
+            ) {
+
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text(
+                    "Siguiente",
+                    color = Color.Black,
+                )
+                Icon(
+                    Icons.Filled.ArrowForward,
+                    contentDescription = "ArrowForward",
+                    tint = Color.Black
+                )
+            }
         }
 
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
-    val mContext = LocalContext.current
+    }
+}
 
+
+@Composable
+fun selectDatePicker() {
+    val mContext = LocalContext.current
     val mYear: Int
     val mMonth: Int
     val mDay: Int
-
     val mCalendar = Calendar.getInstance()
 
     mYear = mCalendar.get(Calendar.YEAR)
@@ -180,21 +269,89 @@ fun app() {
     val mDatePickerDialog = DatePickerDialog(
         mContext,
         { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-            mDate.value = "$mDayOfMonth/${mMonth+1}/$mYear"
+            mDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
         }, mYear, mMonth, mDay
     )
 
-            Button(onClick = {
-            mDatePickerDialog.show()
-        }, colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow) ) {
-            Text(text = "Date Picker", color = Color.Black)
+    Button(onClick = {
+        mDatePickerDialog.show()
+    }, colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta)) {
+        Text("${mDate.value}", color = Color.Black)
+    }
+}
+
+@Composable
+fun GenderDropdownMenu() {
+    var isExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    var grade by remember {
+        mutableStateOf("")
+    }
+    ExposedDropdownMenuBox(
+        expanded = isExpanded,
+        onExpandedChange = { newValue ->
+            isExpanded = newValue
         }
+    )
+    {
+        TextField(
+            value = grade,
+            onValueChange = {},
+            readOnly = true,
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+            },
+            placeholder = {
+                Text(text = "Grado de Escolaridad")
+            },
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            modifier = Modifier.menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = {
+                isExpanded = false
+            }
+        ) {
+            DropdownMenuItem(
+                text = {
+                    Text(text = "Primaria")
+                },
+                onClick = {
+                    grade = "Primaria"
+                    isExpanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = {
+                    Text(text = "Secundaria")
+                },
+                onClick = {
+                    grade = "Secundaria"
+                    isExpanded = false
+                }
+            )
+            DropdownMenuItem(
+                text = {
+                    Text(text = "Universitaria")
+                },
+                onClick = {
+                    grade = "Universitaria"
+                    isExpanded = false
+                }
+            )
 
-        // Adding a space of 100dp height
-        Spacer(modifier = Modifier.size(70.dp))
-
-        // Displaying the mDate value in the Text
-        Text(text = "Fecha: ${mDate.value}", fontSize = 25.sp, textAlign = TextAlign.Center)
+            DropdownMenuItem(
+                text = {
+                    Text(text = "Otro")
+                },
+                onClick = {
+                    grade = "Otro"
+                    isExpanded = false
+                }
+            )
         }
     }
 }
@@ -213,4 +370,6 @@ fun GreetingPreview() {
     Labs20232Gr04Theme {
         Greeting("Android")
     }
+
+
 }
