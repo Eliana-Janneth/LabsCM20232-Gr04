@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -64,6 +64,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import co.edu.udea.compumovil.gr04_20232.labs1.ui.theme.Labs20232Gr04Theme
 import java.util.Date
+import androidx.compose.foundation.layout.Arrangement
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,179 +80,344 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun app() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        Text(
-            text = "Información Personal",
-            fontSize = 15.sp,
-            color = Color.Black,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                Icons.Rounded.Person,
-                contentDescription = stringResource(id = R.string.personIcon),
-                modifier = Modifier.size(48.dp)
-
-            )
-            var name by remember { mutableStateOf("") }
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Nombre") },
-                maxLines = 1,
-                textStyle = TextStyle(
-                    color = Color.Black,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Light
-                ),
+    BoxWithConstraints {
+        if (maxWidth < 600.dp) {
+            Column(
                 modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth(),
-
-                )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                Icons.Rounded.Person,
-                contentDescription = stringResource(id = R.string.personIcon),
-                modifier = Modifier.size(48.dp)
-
-            )
-            var lastName by remember { mutableStateOf("") }
-            OutlinedTextField(
-                value = lastName,
-                onValueChange = { lastName = it },
-                label = { Text("Apellidos") },
-                maxLines = 1,
-                textStyle = TextStyle(
-                    color = Color.Black,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Light
-                ),
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth()
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 20.dp),
-
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                Icons.Rounded.Face,
-                contentDescription = stringResource(id = R.string.personIcon),
-                modifier = Modifier.size(48.dp)
-
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(text = "Sexo")
-            Spacer(modifier = Modifier.width(16.dp))
-            var sex by remember { mutableStateOf("female") }
-            RadioButton(
-                selected = sex === "female",
-                onClick = { sex = "female" }
-            )
-            Text(text = "Femenino")
-
-            RadioButton(
-                selected = sex === "male",
-                onClick = { sex = "male" }
-            )
-            Text(text = "Masculino")
-
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                Icons.Rounded.DateRange,
-                contentDescription = stringResource(id = R.string.personIcon),
-                modifier = Modifier.size(48.dp)
-
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(text = "Fecha de Nacimiento:")
-            Spacer(modifier = Modifier.width(16.dp))
-            selectDatePicker();
-
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 20.dp),
-
-
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            Icon(
-                Icons.Rounded.Info,
-                contentDescription = stringResource(id = R.string.personIcon),
-                modifier = Modifier.size(48.dp)
-
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            GenderDropdownMenu();
-            Spacer(modifier = Modifier.width(16.dp))
-
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-
-            Spacer(Modifier.weight(1f))
-            Button(
-                onClick = {
-                    // mDatePickerDialog.show()
-                },
-                modifier = Modifier.padding(30.dp),
-                contentPadding = PaddingValues(
-                    start = 20.dp,
-                    top = 12.dp,
-                    end = 20.dp,
-                    bottom = 12.dp
-                ),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan)
+                    .fillMaxSize()
+                    .background(Color.White)
             ) {
-
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text(
-                    "Siguiente",
+                    text = "Información Personal",
+                    fontSize = 15.sp,
                     color = Color.Black,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
-                Icon(
-                    Icons.Filled.ArrowForward,
-                    contentDescription = "ArrowForward",
-                    tint = Color.Black
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    inputName()
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    inputLastName()
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
+
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    radioGender()
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    selectBirthday()
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 )
+                {
+                    selectStudy()
+
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                )
+                {
+                    Spacer(Modifier.weight(1f))
+                    Button(
+                        onClick = {
+                            // mDatePickerDialog.show()
+                        },
+                        modifier = Modifier.padding(30.dp),
+                        contentPadding = PaddingValues(
+                            start = 20.dp,
+                            top = 12.dp,
+                            end = 20.dp,
+                            bottom = 12.dp
+                        ),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan)
+                    ) {
+
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Text(
+                            "Siguiente",
+                            color = Color.Black,
+                        )
+                        Icon(
+                            Icons.Filled.ArrowForward,
+                            contentDescription = "ArrowForward",
+                            tint = Color.Black
+                        )
+                    }
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Rounded.Person,
+                        contentDescription = stringResource(id = R.string.personIcon),
+                        modifier = Modifier.size(48.dp)
+                    )
+                    var name by remember { mutableStateOf("") }
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = { Text("Nombre") },
+                        maxLines = 1,
+                        textStyle = TextStyle(
+                            color = Color.Black,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Light
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp)
+                    )
+                    Icon(
+                        Icons.Rounded.Person,
+                        contentDescription = stringResource(id = R.string.personIcon),
+                        modifier = Modifier.size(48.dp)
+                    )
+                    var lastName by remember { mutableStateOf("") }
+                    OutlinedTextField(
+                        value = lastName,
+                        onValueChange = { lastName = it },
+                        label = { Text("Apellidos") },
+                        maxLines = 1,
+                        textStyle = TextStyle(
+                            color = Color.Black,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Light
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp)
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Rounded.Face,
+                        contentDescription = stringResource(id = R.string.personIcon),
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(text = "Sexo")
+                    Spacer(modifier = Modifier.width(16.dp))
+                    var sex by remember { mutableStateOf("female") }
+                    RadioButton(
+                        selected = sex === "female",
+                        onClick = { sex = "female" }
+                    )
+                    Text(text = "Femenino")
+
+                    RadioButton(
+                        selected = sex === "male",
+                        onClick = { sex = "male" }
+                    )
+                    Text(text = "Masculino")
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Rounded.DateRange,
+                        contentDescription = stringResource(id = R.string.personIcon),
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Text(text = "Fecha de Nacimiento:")
+                    Spacer(modifier = Modifier.width(16.dp))
+                    selectDatePicker()
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                )
+                {
+                    Icon(
+                        Icons.Rounded.Info,
+                        contentDescription = stringResource(id = R.string.personIcon),
+                        modifier = Modifier.size(48.dp)
+
+                    )
+                    Spacer(modifier = Modifier.width(20.dp))
+                    schoolDropdownMenu();
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(bottom = 20.dp, end = 100.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                )
+                {
+                    Spacer(Modifier.weight(1f))
+                    Button(
+                        onClick = {
+                            // mDatePickerDialog.show()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan)
+                    ) {
+
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Text(
+                            "Siguiente",
+                            color = Color.Black,
+                        )
+                        Icon(
+                            Icons.Filled.ArrowForward,
+                            contentDescription = "ArrowForward",
+                            tint = Color.Black
+                        )
+                    }
+                }
             }
         }
-
     }
 }
 
+@Composable
+fun inputName() {
+    Icon(
+        Icons.Rounded.Person,
+        contentDescription = stringResource(id = R.string.personIcon),
+        modifier = Modifier.size(48.dp)
+
+    )
+    var name by remember { mutableStateOf("") }
+    OutlinedTextField(
+        value = name,
+        onValueChange = { name = it },
+        label = { Text("Nombre") },
+        maxLines = 1,
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Light
+        ),
+        modifier = Modifier
+            .padding(20.dp)
+            .fillMaxWidth(),
+
+        )
+}
+
+@Composable
+fun inputLastName() {
+    Icon(
+        Icons.Rounded.Person,
+        contentDescription = stringResource(id = R.string.personIcon),
+        modifier = Modifier.size(48.dp)
+    )
+    var lastName by remember { mutableStateOf("") }
+    OutlinedTextField(
+        value = lastName,
+        onValueChange = { lastName = it },
+        label = { Text("Apellidos") },
+        maxLines = 1,
+        textStyle = TextStyle(
+            color = Color.Black,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Light
+        ),
+        modifier = Modifier
+            .padding(20.dp)
+            .fillMaxWidth()
+    )
+}
+
+@Composable
+fun radioGender() {
+    Icon(
+        Icons.Rounded.Face,
+        contentDescription = stringResource(id = R.string.personIcon),
+        modifier = Modifier.size(48.dp)
+
+    )
+    Spacer(modifier = Modifier.width(20.dp))
+    Text(text = "Sexo")
+    Spacer(modifier = Modifier.width(16.dp))
+    var sex by remember { mutableStateOf("female") }
+    RadioButton(
+        selected = sex === "female",
+        onClick = { sex = "female" }
+    )
+    Text(text = "Femenino")
+
+    RadioButton(
+        selected = sex === "male",
+        onClick = { sex = "male" }
+    )
+    Text(text = "Masculino")
+}
+
+@Composable
+fun selectBirthday() {
+    Icon(
+        Icons.Rounded.DateRange,
+        contentDescription = stringResource(id = R.string.personIcon),
+        modifier = Modifier.size(48.dp)
+
+    )
+    Spacer(modifier = Modifier.width(20.dp))
+    Text(text = "Fecha de Nacimiento:")
+    Spacer(modifier = Modifier.width(16.dp))
+    selectDatePicker();
+
+}
+
+@Composable
+fun selectStudy() {
+    Icon(
+        Icons.Rounded.Info,
+        contentDescription = stringResource(id = R.string.personIcon),
+        modifier = Modifier.size(48.dp)
+
+    )
+    Spacer(modifier = Modifier.width(20.dp))
+    schoolDropdownMenu();
+    Spacer(modifier = Modifier.width(16.dp))
+}
 
 @Composable
 fun selectDatePicker() {
@@ -281,7 +448,7 @@ fun selectDatePicker() {
 }
 
 @Composable
-fun GenderDropdownMenu() {
+fun schoolDropdownMenu() {
     var isExpanded by remember {
         mutableStateOf(false)
     }
@@ -354,22 +521,4 @@ fun GenderDropdownMenu() {
             )
         }
     }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Labs20232Gr04Theme {
-        Greeting("Android")
-    }
-
-
 }
