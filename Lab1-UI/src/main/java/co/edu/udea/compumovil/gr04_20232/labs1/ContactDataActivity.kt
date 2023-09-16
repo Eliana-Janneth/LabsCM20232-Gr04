@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,6 +53,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.text.input.TextFieldValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -71,7 +73,6 @@ data class CountryData(
     val country_name: String,
     val country_short_name: String,
     val country_phone_code: Int,
-
 )
 
 interface CountryApi {
@@ -112,13 +113,6 @@ fun appContact() {
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    inputText("Dirección", R.string.personIcon)
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
                     inputText("Email", R.string.personIcon)
                 }
                 Row(
@@ -126,7 +120,14 @@ fun appContact() {
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    CountryDropdown()
+                    listCountryDropdown()
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    inputText("Falta ciudades", R.string.personIcon)
                 }
                 Row(
                     modifier = Modifier
@@ -135,6 +136,9 @@ fun appContact() {
                 ) {
                     inputText("Dirección", R.string.personIcon)
                 }
+
+
+
 
             }
         }
@@ -164,7 +168,6 @@ fun inputText(input: String, icono: Int) {
         modifier = Modifier
             .padding(20.dp)
             .fillMaxWidth(),
-
         )
 }
 
@@ -181,11 +184,87 @@ object CountryApiService {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun listCountryDropdown(){
+    var selectedCountry by remember { mutableStateOf<CountryData?>(null) }
+    var selectedCountrys by remember { mutableStateOf("") }
+    var countries by remember { mutableStateOf<List<CountryData>>(emptyList()) }
+    var isExpanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) {
+            try {
+                countries = CountryApiService.countryApi.getAllCountries()
+                Log.d("API Response","Prueba de log")
+            } catch (e: Exception) {
+                Log.e("API Error", e.message ?: "Unknown error")
+            }
+        }
+    }
+
+        ExposedDropdownMenuBox(
+            expanded = isExpanded,
+            onExpandedChange = { newValue ->
+                isExpanded = newValue
+            }
+        )
+        {
+            TextField(
+                value = selectedCountrys,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+                },
+                placeholder = {
+                    Text(text = "País")
+                },
+                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                modifier = Modifier.menuAnchor()
+            )
+            ExposedDropdownMenu(
+                expanded = isExpanded,
+                onDismissRequest = {
+                    isExpanded = false
+                }
+            ) {
+                Log.d("API", "Lista: "+countries.toString())
+                countries.forEach{
+                    country ->
+                    Log.d("API", country.country_name)
+                    DropdownMenuItem(
+                        text = {
+                            Text(country.country_name)
+                        },
+                        onClick = {
+                            selectedCountrys = country.country_name
+                            isExpanded = false
+                        }
+                    )
+                }
+
+                BasicTextField(
+                    value = TextFieldValue(selectedCountry?.country_name ?: "Select a country"),
+                    onValueChange = {},
+                    readOnly = true,
+                    singleLine = true,
+                    modifier = Modifier.clickable { isExpanded = true }
+                )
+            }
+        }
+
+
+}
+
+
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun CountryDropdown() {
     var selectedCountry by remember { mutableStateOf<CountryData?>(null) }
-    var countries by remember { mutableStateOf<List<CountryData>>(emptyList()) }
+    //var countries by remember { mutableStateOf<List<CountryData>>(emptyList()) }
     var isMenuExpanded by remember { mutableStateOf(false) }
-
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             try {
@@ -216,43 +295,23 @@ fun CountryDropdown() {
                 singleLine = true,
                 placeholder = {},
                 modifier = Modifier.fillMaxWidth(),
-
-
                 )
-            /* TextField(
-                 value = selectedCountry?.name ?: "",
-                 onValueChange = {},
-                 readOnly = true,
-                 modifier = Modifier.fillMaxWidth(),
-                 placeholder = { Text(text = "Selecciona un país") },
-
-
-                 singleLine = true,
-
-                 onClick = {
-                     isMenuExpanded = true
-                 }
-             )*/
-
         }
-
-
-
 
         DropdownMenu(
             expanded = isMenuExpanded,
             onDismissRequest = { isMenuExpanded = false }
         ) {
-            countries.forEach { country ->
+
                 DropdownMenuItem(
                     text = {
-                        Text(text = country.country_name)
+                        Text(text = "Prueba")
                     },
                     onClick = {
-                        selectedCountry = country
+                        //selectedCountry = country
                         isMenuExpanded = false
                     }
                 )
-            }
+
         }
     }
