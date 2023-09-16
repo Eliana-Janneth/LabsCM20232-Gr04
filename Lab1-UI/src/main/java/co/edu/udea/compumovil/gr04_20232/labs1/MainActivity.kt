@@ -432,7 +432,7 @@ fun selectDatePicker() {
     mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
     mCalendar.time = Date()
 
-    val mDate = remember { mutableStateOf("") }
+    val mDate = remember { mutableStateOf("Seleccionar") }
     val mDatePickerDialog = DatePickerDialog(
         mContext,
         { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
