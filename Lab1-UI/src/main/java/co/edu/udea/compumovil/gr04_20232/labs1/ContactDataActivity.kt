@@ -121,7 +121,7 @@ fun appContact() {
                     .background(Color.White)
             ) {
                 Text(
-                    text = "Información De Contacto",
+                    text = stringResource(id = R.string.contact_data_title),
                     fontSize = 15.sp,
                     color = Color.Black,
                     modifier = Modifier.fillMaxWidth(),
@@ -132,14 +132,14 @@ fun appContact() {
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    inputText("Teléfono", R.drawable.round_local_phone_24)
+                    inputText(stringResource(id = R.string.phone), R.drawable.round_local_phone_24)
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    inputText("Email", R.drawable.round_email_24)
+                    inputText(stringResource(id = R.string.email), R.drawable.round_email_24)
 
                 }
                 Row(
@@ -193,7 +193,7 @@ fun appContact() {
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    inputText("Dirección", R.drawable.round_share_location_24)
+                    inputText(stringResource(id = R.string.address), R.drawable.round_share_location_24)
 
                 }
             }
@@ -226,7 +226,6 @@ fun listCountryDropdown() {
         withContext(Dispatchers.IO) {
             try {
                 countries = CountryApiService.countryApi.getAllCountries()
-                Log.d("API Response", "Prueba de log")
             } catch (e: Exception) {
                 Log.e("API Error", e.message ?: "Unknown error")
             }
@@ -248,7 +247,7 @@ fun listCountryDropdown() {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
             },
             placeholder = {
-                Text(text = "País")
+                Text(text = stringResource(id = R.string.country))
             },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
             modifier = Modifier.menuAnchor()

@@ -96,7 +96,7 @@ fun app() {
                     .background(Color.White)
             ) {
                 Text(
-                    text = "Información Personal",
+                    text = stringResource(id = R.string.personal_data_title),
                     fontSize = 15.sp,
                     color = Color.Black,
                     modifier = Modifier.fillMaxWidth(),
@@ -107,14 +107,17 @@ fun app() {
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    inputText("Nombre", R.drawable.round_person_24)
+                    inputText(stringResource(id = R.string.firstname), R.drawable.round_person_24)
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    inputText("Apellido", R.drawable.round_person_add_24)
+                    inputText(
+                        stringResource(id = R.string.lastname),
+                        R.drawable.round_person_add_24
+                    )
                 }
                 Row(
                     modifier = Modifier
@@ -192,7 +195,7 @@ fun app() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter= painterResource(id = R.drawable.round_person_24),
+                        painter = painterResource(id = R.drawable.round_person_24),
                         contentDescription = null,
                         modifier = Modifier.size(48.dp)
                     )
@@ -212,7 +215,7 @@ fun app() {
                             .padding(8.dp)
                     )
                     Icon(
-                        painter= painterResource(id = R.drawable.round_person_add_24),
+                        painter = painterResource(id = R.drawable.round_person_add_24),
                         contentDescription = null,
                         modifier = Modifier.size(48.dp)
                     )
@@ -239,7 +242,7 @@ fun app() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter= painterResource(id = R.drawable.round_group_24),
+                        painter = painterResource(id = R.drawable.round_group_24),
                         contentDescription = null,
                         modifier = Modifier.size(48.dp)
                     )
@@ -251,13 +254,13 @@ fun app() {
                         selected = sex === "female",
                         onClick = { sex = "female" }
                     )
-                    Text(text = "Femenino")
+                    Text(text = stringResource(id = R.string.gender_female))
 
                     RadioButton(
                         selected = sex === "male",
                         onClick = { sex = "male" }
                     )
-                    Text(text = "Masculino")
+                    Text(text = stringResource(id = R.string.gender_male))
                 }
                 Row(
                     modifier = Modifier
@@ -265,12 +268,12 @@ fun app() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter= painterResource(id = R.drawable.round_calendar_month_24),
+                        painter = painterResource(id = R.drawable.round_calendar_month_24),
                         contentDescription = null,
                         modifier = Modifier.size(48.dp)
                     )
                     Spacer(modifier = Modifier.width(20.dp))
-                    Text(text = "Fecha de Nacimiento:")
+                    Text(text = stringResource(id = R.string.birthdate))
                     Spacer(modifier = Modifier.width(16.dp))
                     selectDatePicker()
                 }
@@ -282,7 +285,7 @@ fun app() {
                 )
                 {
                     Icon(
-                        painter= painterResource(id = R.drawable.round_school_24),
+                        painter = painterResource(id = R.drawable.round_school_24),
                         contentDescription = null,
                         modifier = Modifier.size(48.dp)
                     )
@@ -308,7 +311,7 @@ fun app() {
 
                         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                         Text(
-                            "Siguiente",
+                            stringResource(id = R.string.next_button),
                             color = Color.Black,
                         )
                         Icon(
@@ -327,7 +330,7 @@ fun app() {
 @Composable
 fun inputText(input: String, @DrawableRes icono: Int) {
     Icon(
-        painter= painterResource(id = icono),
+        painter = painterResource(id = icono),
         contentDescription = null,
         modifier = Modifier.size(48.dp)
     )
@@ -362,7 +365,7 @@ fun inputText(input: String, @DrawableRes icono: Int) {
 @Composable
 fun inputTextPortrait(input: String, @DrawableRes icono: Int) {
     Icon(
-        painter= painterResource(id = icono),
+        painter = painterResource(id = icono),
         contentDescription = null,
         modifier = Modifier.size(48.dp)
     )
@@ -391,41 +394,42 @@ fun inputTextPortrait(input: String, @DrawableRes icono: Int) {
             //    .weight(1f)
             .padding(8.dp),
 
-    )
+        )
 }
+
 @Composable
 fun radioGender() {
     Icon(
-        painter= painterResource(id = R.drawable.round_group_24),
+        painter = painterResource(id = R.drawable.round_group_24),
         contentDescription = null,
         modifier = Modifier.size(48.dp)
     )
     Spacer(modifier = Modifier.width(20.dp))
-    Text(text = "Sexo")
+    Text(text = stringResource(id = R.string.gender))
     Spacer(modifier = Modifier.width(16.dp))
     var sex by remember { mutableStateOf("female") }
     RadioButton(
         selected = sex === "female",
         onClick = { sex = "female" }
     )
-    Text(text = "Femenino")
+    Text(text = stringResource(id = R.string.gender_female))
 
     RadioButton(
         selected = sex === "male",
         onClick = { sex = "male" }
     )
-    Text(text = "Masculino")
+    Text(text = stringResource(id = R.string.gender_male))
 }
 
 @Composable
 fun selectBirthday() {
     Icon(
-        painter= painterResource(id = R.drawable.round_calendar_month_24),
+        painter = painterResource(id = R.drawable.round_calendar_month_24),
         contentDescription = null,
         modifier = Modifier.size(48.dp)
     )
     Spacer(modifier = Modifier.width(20.dp))
-    Text(text = "Fecha de Nacimiento:")
+    Text(text = stringResource(id = R.string.birthdate))
     Spacer(modifier = Modifier.width(16.dp))
     selectDatePicker();
 
@@ -434,7 +438,7 @@ fun selectBirthday() {
 @Composable
 fun selectStudy() {
     Icon(
-        painter= painterResource(id = R.drawable.round_school_24),
+        painter = painterResource(id = R.drawable.round_school_24),
         contentDescription = null,
         modifier = Modifier.size(48.dp)
     )
@@ -495,7 +499,7 @@ fun schoolDropdownMenu() {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
             },
             placeholder = {
-                Text(text = "Grado de Escolaridad")
+                Text(text = stringResource(id = R.string.scolarity))
             },
             colors = ExposedDropdownMenuDefaults.textFieldColors(),
             modifier = Modifier.menuAnchor()
@@ -508,7 +512,7 @@ fun schoolDropdownMenu() {
         ) {
             DropdownMenuItem(
                 text = {
-                    Text(text = "Primaria")
+                    Text(text = stringResource(id = R.string.scolarity_primary))
                 },
                 onClick = {
                     grade = "Primaria"
@@ -517,7 +521,7 @@ fun schoolDropdownMenu() {
             )
             DropdownMenuItem(
                 text = {
-                    Text(text = "Secundaria")
+                    Text(text = stringResource(id = R.string.scolarity_secundary))
                 },
                 onClick = {
                     grade = "Secundaria"
@@ -526,7 +530,7 @@ fun schoolDropdownMenu() {
             )
             DropdownMenuItem(
                 text = {
-                    Text(text = "Universitaria")
+                    Text(text = stringResource(id = R.string.scolarity_bachelor))
                 },
                 onClick = {
                     grade = "Universitaria"
@@ -536,7 +540,7 @@ fun schoolDropdownMenu() {
 
             DropdownMenuItem(
                 text = {
-                    Text(text = "Otro")
+                    Text(text = stringResource(id = R.string.scolarity_bachelor))
                 },
                 onClick = {
                     grade = "Otro"
