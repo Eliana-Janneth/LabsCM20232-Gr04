@@ -9,6 +9,7 @@ import android.widget.DatePicker
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -65,6 +66,13 @@ import androidx.compose.ui.window.PopupProperties
 import co.edu.udea.compumovil.gr04_20232.labs1.ui.theme.Labs20232Gr04Theme
 import java.util.Date
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 
 
 class MainActivity : ComponentActivity() {
@@ -99,14 +107,14 @@ fun app() {
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    inputName()
+                    inputText("Nombre", R.drawable.round_person_24)
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    inputLastName()
+                    inputText("Apellido", R.drawable.round_person_add_24)
                 }
                 Row(
                     modifier = Modifier
@@ -184,8 +192,8 @@ fun app() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        Icons.Rounded.Person,
-                        contentDescription = stringResource(id = R.string.personIcon),
+                        painter= painterResource(id = R.drawable.round_person_24),
+                        contentDescription = null,
                         modifier = Modifier.size(48.dp)
                     )
                     var name by remember { mutableStateOf("") }
@@ -204,8 +212,8 @@ fun app() {
                             .padding(8.dp)
                     )
                     Icon(
-                        Icons.Rounded.Person,
-                        contentDescription = stringResource(id = R.string.personIcon),
+                        painter= painterResource(id = R.drawable.round_person_add_24),
+                        contentDescription = null,
                         modifier = Modifier.size(48.dp)
                     )
                     var lastName by remember { mutableStateOf("") }
@@ -231,8 +239,8 @@ fun app() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        Icons.Rounded.Face,
-                        contentDescription = stringResource(id = R.string.personIcon),
+                        painter= painterResource(id = R.drawable.round_group_24),
+                        contentDescription = null,
                         modifier = Modifier.size(48.dp)
                     )
                     Spacer(modifier = Modifier.width(20.dp))
@@ -257,8 +265,8 @@ fun app() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        Icons.Rounded.DateRange,
-                        contentDescription = stringResource(id = R.string.personIcon),
+                        painter= painterResource(id = R.drawable.round_calendar_month_24),
+                        contentDescription = null,
                         modifier = Modifier.size(48.dp)
                     )
                     Spacer(modifier = Modifier.width(20.dp))
@@ -274,10 +282,9 @@ fun app() {
                 )
                 {
                     Icon(
-                        Icons.Rounded.Info,
-                        contentDescription = stringResource(id = R.string.personIcon),
+                        painter= painterResource(id = R.drawable.round_school_24),
+                        contentDescription = null,
                         modifier = Modifier.size(48.dp)
-
                     )
                     Spacer(modifier = Modifier.width(20.dp))
                     schoolDropdownMenu();
@@ -316,63 +323,82 @@ fun app() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun inputName() {
+fun inputText(input: String, @DrawableRes icono: Int) {
     Icon(
-        Icons.Rounded.Person,
-        contentDescription = stringResource(id = R.string.personIcon),
+        painter= painterResource(id = icono),
+        contentDescription = null,
         modifier = Modifier.size(48.dp)
-
     )
-    var name by remember { mutableStateOf("") }
+    var inputName by remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
     OutlinedTextField(
-        value = name,
-        onValueChange = { name = it },
-        label = { Text("Nombre") },
+        value = inputName,
+        onValueChange = { inputName = it },
+        label = { Text(input) },
         maxLines = 1,
         textStyle = TextStyle(
             color = Color.Black,
             fontSize = 20.sp,
             fontWeight = FontWeight.Light
+        ),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next
+        ),// Cambia "Enter" a "Siguiente"
+        keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }
         ),
         modifier = Modifier
             .padding(20.dp)
             .fillMaxWidth(),
-
-        )
+    )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun inputLastName() {
+fun inputTextPortrait(input: String, @DrawableRes icono: Int) {
     Icon(
-        Icons.Rounded.Person,
-        contentDescription = stringResource(id = R.string.personIcon),
+        painter= painterResource(id = icono),
+        contentDescription = null,
         modifier = Modifier.size(48.dp)
     )
-    var lastName by remember { mutableStateOf("") }
+    var inputName by remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
     OutlinedTextField(
-        value = lastName,
-        onValueChange = { lastName = it },
-        label = { Text("Apellidos") },
+        value = inputName,
+        onValueChange = { inputName = it },
+        label = { Text(input) },
         maxLines = 1,
         textStyle = TextStyle(
             color = Color.Black,
             fontSize = 20.sp,
             fontWeight = FontWeight.Light
         ),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next
+        ),// Cambia "Enter" a "Siguiente"
+        keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }
+        ),
         modifier = Modifier
-            .padding(20.dp)
-            .fillMaxWidth()
+            //    .weight(1f)
+            .padding(8.dp),
+
     )
 }
-
 @Composable
 fun radioGender() {
     Icon(
-        Icons.Rounded.Face,
-        contentDescription = stringResource(id = R.string.personIcon),
+        painter= painterResource(id = R.drawable.round_group_24),
+        contentDescription = null,
         modifier = Modifier.size(48.dp)
-
     )
     Spacer(modifier = Modifier.width(20.dp))
     Text(text = "Sexo")
@@ -394,10 +420,9 @@ fun radioGender() {
 @Composable
 fun selectBirthday() {
     Icon(
-        Icons.Rounded.DateRange,
-        contentDescription = stringResource(id = R.string.personIcon),
+        painter= painterResource(id = R.drawable.round_calendar_month_24),
+        contentDescription = null,
         modifier = Modifier.size(48.dp)
-
     )
     Spacer(modifier = Modifier.width(20.dp))
     Text(text = "Fecha de Nacimiento:")
@@ -409,14 +434,13 @@ fun selectBirthday() {
 @Composable
 fun selectStudy() {
     Icon(
-        Icons.Rounded.Info,
-        contentDescription = stringResource(id = R.string.personIcon),
+        painter= painterResource(id = R.drawable.round_school_24),
+        contentDescription = null,
         modifier = Modifier.size(48.dp)
-
     )
     Spacer(modifier = Modifier.width(20.dp))
     schoolDropdownMenu();
-    Spacer(modifier = Modifier.width(16.dp))
+    Spacer(modifier = Modifier.width(10.dp))
 }
 
 @Composable
