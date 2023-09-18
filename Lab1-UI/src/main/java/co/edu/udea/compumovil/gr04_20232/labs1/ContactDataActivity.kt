@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,7 +57,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -107,23 +111,23 @@ interface CountryApi {
 
 @Composable
 fun appContact() {
-    val focusRequesterPhone = remember { FocusRequester() }
-    val focusRequesterEmail = remember { FocusRequester() }
-    val focusRequesterCountry = remember { FocusRequester() }
-    val focusRequesterDepartment = remember { FocusRequester() }
-    val focusRequesterCity = remember { FocusRequester() }
-    val focusRequesterAddress = remember { FocusRequester() }
+
     BoxWithConstraints {
+        val colorBackground = Color(0xffbfdbff)
+        val colorTittle = Color(0xff164583)
+        val colorIcon = Color(0xff164583)
+
         if (maxWidth < 600.dp) {
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White)
+                    .background(colorBackground)
             ) {
                 Text(
                     text = stringResource(id = R.string.contact_data_title),
-                    fontSize = 15.sp,
-                    color = Color.Black,
+                    fontSize = 28.sp,
+                    color = colorTittle,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
@@ -148,10 +152,13 @@ fun appContact() {
                         .padding(bottom = 20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+
                     Icon(
-                        painter= painterResource(id = R.drawable.round_outlined_flag_24),
+                        painter = painterResource(id = R.drawable.round_outlined_flag_24),
                         contentDescription = null,
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(48.dp),
+                        tint = colorIcon
+
                     )
 
                     Spacer(modifier = Modifier.width(20.dp))
@@ -165,9 +172,10 @@ fun appContact() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter= painterResource(id = R.drawable.round_place_24),
+                        painter = painterResource(id = R.drawable.round_place_24),
                         contentDescription = null,
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(48.dp),
+                        tint = colorIcon
                     )
                     Spacer(modifier = Modifier.width(20.dp))
                     listCountryDropdown()
@@ -180,9 +188,10 @@ fun appContact() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        painter= painterResource(id = R.drawable.round_location_city_24),
+                        painter = painterResource(id = R.drawable.round_location_city_24),
                         contentDescription = null,
-                        modifier = Modifier.size(48.dp)
+                        modifier = Modifier.size(48.dp),
+                        tint = colorIcon
                     )
                     Spacer(modifier = Modifier.width(20.dp))
                     listCountryDropdown()
@@ -193,15 +202,51 @@ fun appContact() {
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    inputText(stringResource(id = R.string.address), R.drawable.round_share_location_24)
+                    inputText(
+                        stringResource(id = R.string.address),
+                        R.drawable.round_share_location_24
+                    )
 
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                )
+                {
+                    Spacer(Modifier.weight(1f))
+                    val colorBack = Color(0xffa1cafe)
+                    val colorText = Color(0xff043f8a)
+                    Button(
+                        onClick = {
+                            // mDatePickerDialog.show()
+                        },
+                        modifier = Modifier.padding(30.dp),
+                        contentPadding = PaddingValues(
+                            start = 20.dp,
+                            top = 12.dp,
+                            end = 20.dp,
+                            bottom = 12.dp
+                        ),
+                        colors = ButtonDefaults.buttonColors(containerColor = colorBack)
+                    ) {
+
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Text(
+                            "Siguiente",
+                            color = colorText,
+                        )
+                        Icon(
+                            Icons.Filled.ArrowForward,
+                            contentDescription = "ArrowForward",
+                            tint = colorText
+                        )
+                    }
                 }
             }
         }
     }
 }
-
-
 
 
 object CountryApiService {
@@ -221,7 +266,9 @@ fun listCountryDropdown() {
     var selectedCountrys by remember { mutableStateOf("") }
     var countries by remember { mutableStateOf<List<CountryData>>(emptyList()) }
     var isExpanded by remember { mutableStateOf(false) }
-
+    val colorText = Color(0xff043f8a)
+    val colorBack = Color(0xffa1cafe)
+    val colorLabel = Color(0xff002a61)
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             try {
@@ -249,8 +296,13 @@ fun listCountryDropdown() {
             placeholder = {
                 Text(text = stringResource(id = R.string.country))
             },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            modifier = Modifier.menuAnchor()
+            colors = ExposedDropdownMenuDefaults.textFieldColors(
+                textColor = colorText,
+                focusedIndicatorColor = Color.Transparent,
+                cursorColor = colorText,
+                containerColor = colorBack,
+                focusedLabelColor = colorLabel,
+            ), modifier = Modifier.menuAnchor()
         )
         ExposedDropdownMenu(
             expanded = isExpanded,

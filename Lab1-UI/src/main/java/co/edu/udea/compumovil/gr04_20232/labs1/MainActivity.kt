@@ -11,6 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -66,11 +67,19 @@ import androidx.compose.ui.window.PopupProperties
 import co.edu.udea.compumovil.gr04_20232.labs1.ui.theme.Labs20232Gr04Theme
 import java.util.Date
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 
@@ -80,6 +89,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             app()
+            rememberLazyListState()
         }
     }
 }
@@ -89,16 +99,18 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun app() {
     BoxWithConstraints {
+        val colorBackground = Color(0xffbfdbff)
+        val colorTittle = Color(0xff164583)
         if (maxWidth < 600.dp) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White)
+                    .background(colorBackground)
             ) {
                 Text(
                     text = stringResource(id = R.string.personal_data_title),
-                    fontSize = 15.sp,
-                    color = Color.Black,
+                    fontSize = 28.sp,
+                    color = colorTittle,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center
                 )
@@ -123,7 +135,6 @@ fun app() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 20.dp),
-
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     radioGender()
@@ -153,6 +164,8 @@ fun app() {
                 )
                 {
                     Spacer(Modifier.weight(1f))
+                    val colorBack = Color(0xffa1cafe)
+                    val colorText = Color(0xff043f8a)
                     Button(
                         onClick = {
                             // mDatePickerDialog.show()
@@ -164,18 +177,18 @@ fun app() {
                             end = 20.dp,
                             bottom = 12.dp
                         ),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan)
+                        colors = ButtonDefaults.buttonColors(containerColor = colorBack)
                     ) {
 
                         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                         Text(
                             "Siguiente",
-                            color = Color.Black,
+                            color = colorText,
                         )
                         Icon(
                             Icons.Filled.ArrowForward,
                             contentDescription = "ArrowForward",
-                            tint = Color.Black
+                            tint = colorText
                         )
                     }
                 }
@@ -329,22 +342,36 @@ fun app() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun inputText(input: String, @DrawableRes icono: Int) {
+    val colorIcon = Color(0xff164583)
+    val colorText = Color(0xff043f8a)
+    val colorBack = Color(0xffa1cafe)
+    val colorLabel = Color(0xff002a61)
+
     Icon(
         painter = painterResource(id = icono),
         contentDescription = null,
-        modifier = Modifier.size(48.dp)
+        modifier = Modifier.size(48.dp),
+        tint = colorIcon
     )
     var inputName by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
+
     OutlinedTextField(
         value = inputName,
         onValueChange = { inputName = it },
         label = { Text(input) },
         maxLines = 1,
         textStyle = TextStyle(
-            color = Color.Black,
+            color = colorText,
+            fontWeight = FontWeight.Normal,
             fontSize = 20.sp,
-            fontWeight = FontWeight.Light
+        ),
+        colors = TextFieldDefaults.textFieldColors(
+            textColor = colorText,
+            focusedIndicatorColor = Color.Transparent,
+            cursorColor = colorText,
+            containerColor = colorBack,
+            focusedLabelColor = colorLabel
         ),
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Text,
@@ -356,7 +383,7 @@ fun inputText(input: String, @DrawableRes icono: Int) {
             }
         ),
         modifier = Modifier
-            .padding(20.dp)
+            .padding(top = 20.dp, start = 20.dp,end=20.dp, bottom = 20.dp)
             .fillMaxWidth(),
     )
 }
@@ -399,10 +426,12 @@ fun inputTextPortrait(input: String, @DrawableRes icono: Int) {
 
 @Composable
 fun radioGender() {
+    val colorIcon = Color(0xff164583)
     Icon(
         painter = painterResource(id = R.drawable.round_group_24),
         contentDescription = null,
-        modifier = Modifier.size(48.dp)
+        modifier = Modifier.size(48.dp),
+        tint = colorIcon
     )
     Spacer(modifier = Modifier.width(20.dp))
     Text(text = stringResource(id = R.string.gender))
@@ -413,7 +442,6 @@ fun radioGender() {
         onClick = { sex = "female" }
     )
     Text(text = stringResource(id = R.string.gender_female))
-
     RadioButton(
         selected = sex === "male",
         onClick = { sex = "male" }
@@ -423,10 +451,12 @@ fun radioGender() {
 
 @Composable
 fun selectBirthday() {
+    val colorIcon = Color(0xff164583)
     Icon(
         painter = painterResource(id = R.drawable.round_calendar_month_24),
         contentDescription = null,
-        modifier = Modifier.size(48.dp)
+        modifier = Modifier.size(48.dp),
+        tint = colorIcon
     )
     Spacer(modifier = Modifier.width(20.dp))
     Text(text = stringResource(id = R.string.birthdate))
@@ -437,10 +467,12 @@ fun selectBirthday() {
 
 @Composable
 fun selectStudy() {
+    val colorIcon = Color(0xff164583)
     Icon(
         painter = painterResource(id = R.drawable.round_school_24),
         contentDescription = null,
-        modifier = Modifier.size(48.dp)
+        modifier = Modifier.size(48.dp),
+        tint = colorIcon
     )
     Spacer(modifier = Modifier.width(20.dp))
     schoolDropdownMenu();
@@ -449,6 +481,8 @@ fun selectStudy() {
 
 @Composable
 fun selectDatePicker() {
+    val colorIcon = Color(0xffa1cafe)
+
     val mContext = LocalContext.current
     val mYear: Int
     val mMonth: Int
@@ -470,7 +504,7 @@ fun selectDatePicker() {
 
     Button(onClick = {
         mDatePickerDialog.show()
-    }, colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta)) {
+    }, colors = ButtonDefaults.buttonColors(containerColor = colorIcon)) {
         Text("${mDate.value}", color = Color.Black)
     }
 }
@@ -491,6 +525,9 @@ fun schoolDropdownMenu() {
         }
     )
     {
+        val colorText = Color(0xff043f8a)
+        val colorBack = Color(0xffa1cafe)
+        val colorLabel = Color(0xff002a61)
         TextField(
             value = grade,
             onValueChange = {},
@@ -501,7 +538,14 @@ fun schoolDropdownMenu() {
             placeholder = {
                 Text(text = stringResource(id = R.string.scolarity))
             },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            colors = ExposedDropdownMenuDefaults.textFieldColors(
+                textColor = colorText,
+                focusedIndicatorColor = Color.Transparent,
+                cursorColor = colorText,
+                containerColor = colorBack,
+                focusedLabelColor = colorLabel,
+
+            ),
             modifier = Modifier.menuAnchor()
         )
         ExposedDropdownMenu(
@@ -548,5 +592,18 @@ fun schoolDropdownMenu() {
                 }
             )
         }
+    }
+}
+
+@Composable
+fun rememberLazyListState(
+    initialFirstVisibleItemIndex: Int = 0,
+    initialFirstVisibleItemScrollOffset: Int = 0
+): LazyListState {
+    return rememberSaveable(saver = LazyListState.Saver) {
+        LazyListState(
+            initialFirstVisibleItemIndex,
+            initialFirstVisibleItemScrollOffset
+        )
     }
 }
