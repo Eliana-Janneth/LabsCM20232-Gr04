@@ -99,6 +99,8 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun app() {
+    val gender_female = stringResource(R.string.gender_female)
+    val gender_male = stringResource(R.string.gender_male)
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
@@ -183,7 +185,7 @@ fun app() {
 
                         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                         Text(
-                            "Siguiente",
+                            stringResource(R.string.next_button),
                             color = colorText,
                         )
                         Icon(
@@ -265,14 +267,14 @@ fun app() {
                     Spacer(modifier = Modifier.width(16.dp))
                     var sex by remember { mutableStateOf("female") }
                     RadioButton(
-                        selected = sex === "female",
-                        onClick = { sex = "female" }
+                        selected = sex === gender_female,
+                        onClick = { sex = gender_female }
                     )
                     Text(text = stringResource(id = R.string.gender_female))
 
                     RadioButton(
-                        selected = sex === "male",
-                        onClick = { sex = "male" }
+                        selected = sex === gender_male,
+                        onClick = { sex = gender_male }
                     )
                     Text(text = stringResource(id = R.string.gender_male))
                 }
@@ -428,6 +430,8 @@ fun inputTextPortrait(input: String, @DrawableRes icono: Int) {
 @Composable
 fun radioGender() {
     val colorIcon = Color(0xff164583)
+    val gender_female = stringResource(R.string.gender_female)
+    val gender_male = stringResource(R.string.gender_male)
     Icon(
         painter = painterResource(id = R.drawable.round_group_24),
         contentDescription = null,
@@ -437,15 +441,15 @@ fun radioGender() {
     Spacer(modifier = Modifier.width(20.dp))
     Text(text = stringResource(id = R.string.gender))
     Spacer(modifier = Modifier.width(16.dp))
-    var sex by remember { mutableStateOf("female") }
+    var sex by remember { mutableStateOf(gender_female) }
     RadioButton(
-        selected = sex === "female",
-        onClick = { sex = "female" }
+        selected = sex === gender_female,
+        onClick = { sex = gender_female }
     )
     Text(text = stringResource(id = R.string.gender_female))
     RadioButton(
-        selected = sex === "male",
-        onClick = { sex = "male" }
+        selected = sex === gender_male,
+        onClick = { sex = gender_male }
     )
     Text(text = stringResource(id = R.string.gender_male))
 }
@@ -521,6 +525,12 @@ fun schoolDropdownMenu() {
     var grade by remember {
         mutableStateOf("")
     }
+
+    val labelScolarityPrimary = stringResource(R.string.scolarity_primary)
+    val labelScolaritySecundary = stringResource(R.string.scolarity_secundary)
+    val labelScolarityBachelor = stringResource(R.string.scolarity_bachelor)
+    val labelScolarityOther = stringResource(R.string.scolarity_other)
+
     ExposedDropdownMenuBox(
         expanded = isExpanded,
         onExpandedChange = { newValue ->
@@ -562,7 +572,7 @@ fun schoolDropdownMenu() {
                     Text(text = stringResource(id = R.string.scolarity_primary))
                 },
                 onClick = {
-                    grade = "Primaria"
+                    grade = labelScolarityPrimary
                     isExpanded = false
                 }
             )
@@ -571,7 +581,7 @@ fun schoolDropdownMenu() {
                     Text(text = stringResource(id = R.string.scolarity_secundary))
                 },
                 onClick = {
-                    grade = "Secundaria"
+                    grade = labelScolaritySecundary
                     isExpanded = false
                 }
             )
@@ -580,17 +590,17 @@ fun schoolDropdownMenu() {
                     Text(text = stringResource(id = R.string.scolarity_bachelor))
                 },
                 onClick = {
-                    grade = "Universitaria"
+                    grade = labelScolarityBachelor
                     isExpanded = false
                 }
             )
 
             DropdownMenuItem(
                 text = {
-                    Text(text = stringResource(id = R.string.scolarity_bachelor))
+                    Text(text = stringResource(id = R.string.scolarity_other))
                 },
                 onClick = {
-                    grade = "Otro"
+                    grade = labelScolarityOther
                     isExpanded = false
                 }
             )
