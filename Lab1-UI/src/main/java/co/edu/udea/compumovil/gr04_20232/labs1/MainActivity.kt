@@ -3,6 +3,7 @@
 package co.edu.udea.compumovil.gr04_20232.labs1
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.widget.DatePicker
@@ -494,7 +495,9 @@ fun selectDatePicker() {
     mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
     mCalendar.time = Date()
 
-    val mDate = remember { mutableStateOf("Seleccionar") }
+
+    val selectButtonString = stringResource(R.string.select_button)
+    val mDate = remember { mutableStateOf(value = selectButtonString) }
     val mDatePickerDialog = DatePickerDialog(
         mContext,
         { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
