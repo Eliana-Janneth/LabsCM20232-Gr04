@@ -90,8 +90,8 @@ class ContactDataActivity : ComponentActivity() {
 data class CountryData(
     val country: String,
     val cities: List<String>,
-    
-)
+
+    )
 
 interface CountryApi {
     @Headers(
@@ -137,43 +137,13 @@ fun appContact() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     inputText(stringResource(id = R.string.email), R.drawable.round_email_24)
-
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_outlined_flag_24),
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp),
-                        tint = colorIcon
-
-                    )
-
-                    Spacer(modifier = Modifier.width(20.dp))
-                    listCountryDropdown()
-                    Spacer(modifier = Modifier.width(16.dp))
                 }
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_location_city_24),
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp),
-                        tint = colorIcon
-                    )
-                    Spacer(modifier = Modifier.width(20.dp))
-                    Spacer(modifier = Modifier.width(16.dp))
-                }
+
+                Spacer(modifier = Modifier.width(20.dp))
+                listCountryDropdown()
+
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -183,7 +153,6 @@ fun appContact() {
                         stringResource(id = R.string.address),
                         R.drawable.round_share_location_24
                     )
-
                 }
                 Row(
                     modifier = Modifier
@@ -248,6 +217,7 @@ fun listCountryDropdown() {
     val colorText = Color(0xff043f8a)
     val colorBack = Color(0xffa1cafe)
     val colorLabel = Color(0xff002a61)
+    val colorIcon = Color(0xff164583)
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -261,49 +231,67 @@ fun listCountryDropdown() {
 
     Column {
         // Primer menú desplegable para países
-        ExposedDropdownMenuBox(
-            expanded = isCountryExpanded,
-            onExpandedChange = { newValue ->
-                isCountryExpanded = newValue
-            }
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            TextField(
-                value = selectedCountry?.country ?: "",
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCountryExpanded)
-                },
-                placeholder = {
-                    Text(text = stringResource(id = R.string.country))
-                },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                    textColor = colorText,
-                    focusedIndicatorColor = Color.Transparent,
-                    cursorColor = colorText,
-                    containerColor = colorBack,
-                    focusedLabelColor = colorLabel,
-                ),
-                modifier = Modifier.menuAnchor()
+            Icon(
+                painter = painterResource(id = R.drawable.round_outlined_flag_24),
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = colorIcon
+
             )
-            ExposedDropdownMenu(
+            Spacer(modifier = Modifier.width(20.dp))
+
+            ExposedDropdownMenuBox(
                 expanded = isCountryExpanded,
-                onDismissRequest = {
-                    isCountryExpanded = false
+                onExpandedChange = { newValue ->
+                    isCountryExpanded = newValue
                 }
             ) {
-                countries.forEach { country ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(country.country)
-                        },
-                        onClick = {
-                            selectedCountry = country
-                            isCountryExpanded = false
-                            // Actualiza las ciudades para el país seleccionado
-                            cities = country.cities
-                        }
-                    )
+                TextField(
+                    value = selectedCountry?.country ?: "",
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCountryExpanded)
+                    },
+                    placeholder = {
+                        Text(text = stringResource(id = R.string.country))
+                    },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(
+                        textColor = colorText,
+                        focusedIndicatorColor = Color.Transparent,
+                        cursorColor = colorText,
+                        containerColor = colorBack,
+                        focusedLabelColor = colorLabel,
+                    ),
+                    modifier = Modifier.menuAnchor()
+                )
+                ExposedDropdownMenu(
+                    expanded = isCountryExpanded,
+                    onDismissRequest = {
+                        isCountryExpanded = false
+                    }
+                ) {
+                    countries.forEach { country ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(country.country)
+                            },
+                            onClick = {
+                                selectedCountry = country
+                                isCountryExpanded = false
+                                // Actualiza las ciudades para el país seleccionado
+                                cities = country.cities
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -311,47 +299,61 @@ fun listCountryDropdown() {
         Spacer(modifier = Modifier.height(16.dp)) // Espacio entre los menús desplegables
 
         // Segundo menú desplegable para ciudades
-        ExposedDropdownMenuBox(
-            expanded = isCityExpanded,
-            onExpandedChange = { newValue ->
-                isCityExpanded = newValue
-            }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            TextField(
-                value = selectedCity ?: "",
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCityExpanded)
-                },
-                placeholder = {
-                    Text(text = stringResource(id = R.string.city))
-                },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(
-                    textColor = colorText,
-                    focusedIndicatorColor = Color.Transparent,
-                    cursorColor = colorText,
-                    containerColor = colorBack,
-                    focusedLabelColor = colorLabel,
-                ),
-                modifier = Modifier.menuAnchor()
+            Icon(
+                painter = painterResource(id = R.drawable.round_location_city_24),
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = colorIcon
             )
-            ExposedDropdownMenu(
+            Spacer(modifier = Modifier.width(20.dp))
+            ExposedDropdownMenuBox(
                 expanded = isCityExpanded,
-                onDismissRequest = {
-                    isCityExpanded = false
+                onExpandedChange = { newValue ->
+                    isCityExpanded = newValue
                 }
             ) {
-                cities.forEach { city ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(city)
-                        },
-                        onClick = {
-                            selectedCity = city
-                            isCityExpanded = false
-                        }
-                    )
+                TextField(
+                    value = selectedCity ?: "",
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCityExpanded)
+                    },
+                    placeholder = {
+                        Text(text = stringResource(id = R.string.city))
+                    },
+                    colors = ExposedDropdownMenuDefaults.textFieldColors(
+                        textColor = colorText,
+                        focusedIndicatorColor = Color.Transparent,
+                        cursorColor = colorText,
+                        containerColor = colorBack,
+                        focusedLabelColor = colorLabel,
+                    ),
+                    modifier = Modifier.menuAnchor()
+                )
+                ExposedDropdownMenu(
+                    expanded = isCityExpanded,
+                    onDismissRequest = {
+                        isCityExpanded = false
+                    }
+                ) {
+                    cities.forEach { city ->
+                        DropdownMenuItem(
+                            text = {
+                                Text(city)
+                            },
+                            onClick = {
+                                selectedCity = city
+                                isCityExpanded = false
+                            }
+                        )
+                    }
                 }
             }
         }
