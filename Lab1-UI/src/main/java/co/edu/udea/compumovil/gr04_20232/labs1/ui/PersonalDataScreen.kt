@@ -95,14 +95,14 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                 text = stringResource(id = R.string.personal_data_title),
                 fontSize = 28.sp,
                 color = colorTittle,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top=5.dp),
                 textAlign = TextAlign.Center
             )
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 15.dp),
+                    .padding(top = 5.dp, bottom = 10.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -116,7 +116,7 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                         viewModel.firstName = newValue
                     }
                 )
-                Spacer(modifier = Modifier.width(15.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 inputText(
                     stringResource(id = R.string.lastname),
                     R.drawable.round_person_add_24,
@@ -132,7 +132,7 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 15.dp),
+                    .padding(bottom = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
 
@@ -143,7 +143,7 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 15.dp),
+                    .padding(bottom = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -153,7 +153,7 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 90.dp),
+                    .padding(start = 60.dp),
                 verticalAlignment = Alignment.CenterVertically
             )
             {
@@ -208,7 +208,7 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
                 text = stringResource(id = R.string.personal_data_title),
                 fontSize = 28.sp,
                 color = colorTittle,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(top=15.dp),
                 textAlign = TextAlign.Center
             )
             Row(

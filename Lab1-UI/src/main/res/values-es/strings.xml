@@ -23,4 +23,5 @@
     <string name="gender_female">Femenino</string>
     <string name="select_button">Seleccionar</string>
     <string name="next_button">Siguiente</string>
+    <string name="save_button">Guardar</string>
 </resources>
