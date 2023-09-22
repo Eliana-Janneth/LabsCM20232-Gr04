@@ -1,7 +1,9 @@
 package co.edu.udea.compumovil.gr04_20232.labs1.ui
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,6 +43,7 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -71,9 +74,237 @@ object CountryApiService {
     val countryApi: CountryApi = retrofit.create(CountryApi::class.java)
 }
 
-
 @Composable
 fun ContactDataScreen(viewModel: InfoViewModel) {
+    val screenOrientation = LocalConfiguration.current.orientation
+    when (screenOrientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            contactDataHorizontalLayout(viewModel)
+        }
+
+        Configuration.ORIENTATION_PORTRAIT -> {
+            contactDataVerticalLayout(viewModel)
+        }
+
+        else -> {
+            contactDataVerticalLayout(viewModel)
+        }
+    }
+}
+
+@Composable
+fun contactDataHorizontalLayout(viewModel: InfoViewModel) {
+    BoxWithConstraints {
+        val colorBackground = Color(0xffbfdbff)
+        val colorTittle = Color(0xff164583)
+        val colorIcon = Color(0xff164583)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colorBackground)
+        ) {
+            Text(
+                text = stringResource(id = R.string.contact_data_title),
+                fontSize = 28.sp,
+                color = colorTittle,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                inputText(
+                    stringResource(id = R.string.phone),
+                    R.drawable.round_local_phone_24,
+                    KeyboardType.Number,
+                    KeyboardCapitalization.None,
+                    viewModel.phone,
+                    onValueChange = { newValue ->
+                        viewModel.phone = newValue
+                    }
+                )
+                Spacer(modifier = Modifier.width(15.dp))
+                inputText(
+                    stringResource(id = R.string.email),
+                    R.drawable.round_email_24,
+                    KeyboardType.Email,
+                    KeyboardCapitalization.None,
+                    viewModel.email,
+                    onValueChange = { newValue ->
+                        viewModel.email = newValue
+                    }
+                )
+            }
+
+
+            listCountryDropdown()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                inputText(
+                    stringResource(id = R.string.address),
+                    R.drawable.round_share_location_24,
+                    KeyboardType.Text,
+                    KeyboardCapitalization.Sentences,
+                    viewModel.address,
+                    onValueChange = { newValue ->
+                        viewModel.address = newValue
+                    }
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                Spacer(Modifier.weight(1f))
+                val colorBack = Color(0xffa1cafe)
+                val colorText = Color(0xff043f8a)
+                Button(
+                    onClick = {
+                        // mDatePickerDialog.show()
+                    },
+                    modifier = Modifier.padding(30.dp),
+                    contentPadding = PaddingValues(
+                        start = 20.dp,
+                        top = 12.dp,
+                        end = 20.dp,
+                        bottom = 12.dp
+                    ),
+                    colors = ButtonDefaults.buttonColors(containerColor = colorBack)
+                ) {
+
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(
+                        stringResource(id = R.string.next_button),
+                        color = colorText,
+                    )
+                    Icon(
+                        Icons.Filled.ArrowForward,
+                        contentDescription = "ArrowForward",
+                        tint = colorText
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun contactDataVerticalLayout(viewModel: InfoViewModel) {
+    BoxWithConstraints {
+        val colorBackground = Color(0xffbfdbff)
+        val colorTittle = Color(0xff164583)
+        val colorIcon = Color(0xff164583)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colorBackground)
+        ) {
+            Text(
+                text = stringResource(id = R.string.contact_data_title),
+                fontSize = 28.sp,
+                color = colorTittle,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                inputText(
+                    stringResource(id = R.string.phone),
+                    R.drawable.round_local_phone_24,
+                    KeyboardType.Number,
+                    KeyboardCapitalization.None,
+                    viewModel.phone,
+                    onValueChange = { newValue ->
+                        viewModel.phone = newValue
+                    }
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                inputText(
+                    stringResource(id = R.string.email),
+                    R.drawable.round_email_24,
+                    KeyboardType.Email,
+                    KeyboardCapitalization.None,
+                    viewModel.email,
+                    onValueChange = { newValue ->
+                        viewModel.email = newValue
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.width(20.dp))
+            listCountryDropdown()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                inputText(
+                    stringResource(id = R.string.address),
+                    R.drawable.round_share_location_24,
+                    KeyboardType.Text,
+                    KeyboardCapitalization.Sentences,
+                    viewModel.address,
+                    onValueChange = { newValue ->
+                        viewModel.address = newValue
+                    }
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                Spacer(Modifier.weight(1f))
+                val colorBack = Color(0xffa1cafe)
+                val colorText = Color(0xff043f8a)
+                Button(
+                    onClick = {
+                        // mDatePickerDialog.show()
+                    },
+                    modifier = Modifier.padding(30.dp),
+                    contentPadding = PaddingValues(
+                        start = 20.dp,
+                        top = 12.dp,
+                        end = 20.dp,
+                        bottom = 12.dp
+                    ),
+                    colors = ButtonDefaults.buttonColors(containerColor = colorBack)
+                ) {
+
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(
+                        stringResource(id = R.string.next_button),
+                        color = colorText,
+                    )
+                    Icon(
+                        Icons.Filled.ArrowForward,
+                        contentDescription = "ArrowForward",
+                        tint = colorText
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ContactDataScreens(viewModel: InfoViewModel) {
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
@@ -205,11 +436,8 @@ fun listCountryDropdown() {
             }
         }
     }
-
     Column {
-        // Primer menú desplegable para países
         Spacer(modifier = Modifier.height(20.dp))
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -221,10 +449,8 @@ fun listCountryDropdown() {
                 contentDescription = null,
                 modifier = Modifier.size(48.dp),
                 tint = colorIcon
-
             )
             Spacer(modifier = Modifier.width(20.dp))
-
             ExposedDropdownMenuBox(
                 expanded = isCountryExpanded,
                 onExpandedChange = { newValue ->
@@ -264,24 +490,13 @@ fun listCountryDropdown() {
                             onClick = {
                                 selectedCountry = country
                                 isCountryExpanded = false
-                                // Actualiza las ciudades para el país seleccionado
                                 cities = country.cities
                             }
                         )
                     }
                 }
             }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp)) // Espacio entre los menús desplegables
-
-        // Segundo menú desplegable para ciudades
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+            Spacer(modifier = Modifier.width(15.dp))
             Icon(
                 painter = painterResource(id = R.drawable.round_location_city_24),
                 contentDescription = null,

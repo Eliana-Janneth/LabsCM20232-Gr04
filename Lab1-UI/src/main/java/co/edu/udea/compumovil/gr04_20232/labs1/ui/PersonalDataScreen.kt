@@ -66,7 +66,6 @@ import co.edu.udea.compumovil.gr04_20232.labs1.R
 
 @Composable
 fun PersonalDataScreen(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
-    // NO TOCAR
     val screenOrientation = LocalConfiguration.current.orientation
     when (screenOrientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
