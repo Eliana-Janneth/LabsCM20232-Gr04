@@ -45,7 +45,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.Date
@@ -62,7 +61,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.lifecycle.ViewModel
 import co.edu.udea.compumovil.gr04_20232.labs1.InfoViewModel
 import co.edu.udea.compumovil.gr04_20232.labs1.R
 
@@ -74,161 +72,122 @@ fun PersonalDataScreen(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             personalDataHorizontalLayout(onNextButton, viewModel)
         }
-
         Configuration.ORIENTATION_PORTRAIT -> {
             personalDataVerticalLayout(onNextButton, viewModel)
         }
-
         else -> {
             personalDataVerticalLayout(onNextButton, viewModel)
         }
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
-    val gender_female = stringResource(R.string.gender_female)
-    val gender_male = stringResource(R.string.gender_male)
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
+    BoxWithConstraints {
+        val colorBackground = Color(0xffbfdbff)
+        val colorTittle = Color(0xff164583)
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .background(colorBackground)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.round_person_24),
-                contentDescription = null,
-                modifier = Modifier.size(48.dp)
+            Text(
+                text = stringResource(id = R.string.personal_data_title),
+                fontSize = 28.sp,
+                color = colorTittle,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
             )
-            var name by remember { mutableStateOf("") }
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Nombre") },
-                maxLines = 1,
-                textStyle = TextStyle(
-                    color = Color.Black,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Light
-                ),
+
+            Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp)
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.round_person_add_24),
-                contentDescription = null,
-                modifier = Modifier.size(48.dp)
-            )
-            var lastName by remember { mutableStateOf("") }
-            OutlinedTextField(
-                value = lastName,
-                onValueChange = { lastName = it },
-                label = { Text("Apellidos") },
-                maxLines = 1,
-                textStyle = TextStyle(
-                    color = Color.Black,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Light
-                ),
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp)
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.round_group_24),
-                contentDescription = null,
-                modifier = Modifier.size(48.dp)
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(text = "Sexo")
-            Spacer(modifier = Modifier.width(16.dp))
-            var sex by remember { mutableStateOf("female") }
-            RadioButton(
-                selected = sex === gender_female,
-                onClick = { sex = gender_female }
-            )
-            Text(text = stringResource(id = R.string.gender_female))
-
-            RadioButton(
-                selected = sex === gender_male,
-                onClick = { sex = gender_male }
-            )
-            Text(text = stringResource(id = R.string.gender_male))
-        }
-        Row(
-            modifier = Modifier
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.round_calendar_month_24),
-                contentDescription = null,
-                modifier = Modifier.size(48.dp)
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(text = stringResource(id = R.string.birthdate))
-            Spacer(modifier = Modifier.width(16.dp))
-            selectDatePicker()
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            Icon(
-                painter = painterResource(id = R.drawable.round_school_24),
-                contentDescription = null,
-                modifier = Modifier.size(48.dp)
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            schoolDropdownMenu();
-            Spacer(modifier = Modifier.width(16.dp))
-
-        }
-        Row(
-            modifier = Modifier
-                .padding(bottom = 20.dp, end = 100.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            Spacer(Modifier.weight(1f))
-            Button(
-                onClick = {
-                    // mDatePickerDialog.show()
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan)
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, bottom = 15.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                inputText(
+                    stringResource(id = R.string.firstname),
+                    R.drawable.round_person_24,
+                    KeyboardType.Text,
+                    KeyboardCapitalization.Words,
+                    viewModel.firstName,
+                    onValueChange = { newValue ->
+                        viewModel.firstName = newValue
+                    }
+                )
+                Spacer(modifier = Modifier.width(15.dp))
+                inputText(
+                    stringResource(id = R.string.lastname),
+                    R.drawable.round_person_add_24,
+                    KeyboardType.Text,
+                    KeyboardCapitalization.Words,
+                    viewModel.lastName,
+                    onValueChange = { newValue ->
+                        viewModel.lastName = newValue
+                    }
+                )
+            }
 
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text(
-                    stringResource(id = R.string.next_button),
-                    color = Color.Black,
-                )
-                Icon(
-                    Icons.Filled.ArrowForward,
-                    contentDescription = "ArrowForward",
-                    tint = Color.Black
-                )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 15.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+
+                ) {
+                radioGender()
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 15.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                selectBirthday()
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 90.dp),
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                selectStudy()
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            )
+            {
+                val colorBack = Color(0xffa1cafe)
+                val colorText = Color(0xff043f8a)
+                Button(
+                    onClick = {
+                        onNextButton(2)
+                    },
+                    modifier = Modifier.padding(end = 100.dp, bottom = 20.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = colorBack)
+                ) {
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(
+                        stringResource(R.string.next_button),
+                        color = colorText,
+                    )
+                    Icon(
+                        Icons.Filled.ArrowForward,
+                        contentDescription = "ArrowForward",
+                        tint = colorText
+                    )
+                }
             }
         }
     }
@@ -237,115 +196,115 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
 
 @Composable
 fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
-    val gender_female = stringResource(R.string.gender_female)
-    val gender_male = stringResource(R.string.gender_male)
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
-        if (maxWidth < 600.dp) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(colorBackground)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.personal_data_title),
-                    fontSize = 28.sp,
-                    color = colorTittle,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    inputText(
-                        stringResource(id = R.string.firstname),
-                        R.drawable.round_person_24,
-                        KeyboardType.Text,
-                        KeyboardCapitalization.Words,
-                        viewModel.firstName,
-                        onValueChange = { newValue ->
-                            viewModel.firstName = newValue
-                        }
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    inputText(
-                        stringResource(id = R.string.lastname),
-                        R.drawable.round_person_add_24,
-                        KeyboardType.Text,
-                        KeyboardCapitalization.Words,
-                        viewModel.firstName,
-                        onValueChange = { newValue ->
-                            viewModel.lastName = newValue
-                        }
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    radioGender()
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    selectBirthday()
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                )
-                {
-                    selectStudy()
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                )
-                {
-                    Spacer(Modifier.weight(1f))
-                    val colorBack = Color(0xffa1cafe)
-                    val colorText = Color(0xff043f8a)
-                    Button(
-                        onClick = {
-                            onNextButton(2)
-                        },
-                        modifier = Modifier.padding(30.dp),
-                        contentPadding = PaddingValues(
-                            start = 20.dp,
-                            top = 12.dp,
-                            end = 20.dp,
-                            bottom = 12.dp
-                        ),
-                        colors = ButtonDefaults.buttonColors(containerColor = colorBack)
-                    ) {
 
-                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                        Text(
-                            stringResource(R.string.next_button),
-                            color = colorText,
-                        )
-                        Icon(
-                            Icons.Filled.ArrowForward,
-                            contentDescription = "ArrowForward",
-                            tint = colorText
-                        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colorBackground)
+        ) {
+            Text(
+                text = stringResource(id = R.string.personal_data_title),
+                fontSize = 28.sp,
+                color = colorTittle,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                inputText(
+                    stringResource(id = R.string.firstname),
+                    R.drawable.round_person_24,
+                    KeyboardType.Text,
+                    KeyboardCapitalization.Words,
+                    viewModel.firstName,
+                    onValueChange = { newValue ->
+                        viewModel.firstName = newValue
                     }
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                inputText(
+                    stringResource(id = R.string.lastname),
+                    R.drawable.round_person_add_24,
+                    KeyboardType.Text,
+                    KeyboardCapitalization.Words,
+                    viewModel.lastName,
+                    onValueChange = { newValue ->
+                        viewModel.lastName = newValue
+                    }
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                radioGender()
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                selectBirthday()
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                selectStudy()
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                Spacer(Modifier.weight(1f))
+                val colorBack = Color(0xffa1cafe)
+                val colorText = Color(0xff043f8a)
+                Button(
+                    onClick = {
+                        onNextButton(2)
+                    },
+                    modifier = Modifier.padding(30.dp),
+                    contentPadding = PaddingValues(
+                        start = 20.dp,
+                        top = 12.dp,
+                        end = 20.dp,
+                        bottom = 12.dp
+                    ),
+                    colors = ButtonDefaults.buttonColors(containerColor = colorBack)
+                ) {
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text(
+                        stringResource(R.string.next_button),
+                        color = colorText,
+                    )
+                    Icon(
+                        Icons.Filled.ArrowForward,
+                        contentDescription = "ArrowForward",
+                        tint = colorText
+                    )
                 }
             }
         }
@@ -356,26 +315,42 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
 @Composable
 fun inputText(
     input: String,
-    @DrawableRes icono: Int,
+    @DrawableRes icon: Int,
     keyboard: KeyboardType,
     autoCapitalization: KeyboardCapitalization,
     viewModelValue: String,
     onValueChange: (String) -> Unit
-
 ) {
     val colorIcon = Color(0xff164583)
     val colorText = Color(0xff043f8a)
     val colorBack = Color(0xffa1cafe)
     val colorLabel = Color(0xff002a61)
+    val screenOrientation = LocalConfiguration.current.orientation
+    val modifier = when (screenOrientation) {
+        Configuration.ORIENTATION_PORTRAIT -> {
+            Modifier
+                .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
+                .fillMaxWidth()
+        }
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            Modifier
+                .padding(8.dp)
+                .height(60.dp)
+        }
+        else -> {
+            Modifier
+                .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
+                .fillMaxWidth()
+        }
+    }
 
     Icon(
-        painter = painterResource(id = icono),
+        painter = painterResource(id = icon),
         contentDescription = null,
         modifier = Modifier.size(48.dp),
         tint = colorIcon
     )
     val focusManager = LocalFocusManager.current
-
     OutlinedTextField(
         value = viewModelValue,
         onValueChange = { onValueChange(it) },
@@ -384,7 +359,7 @@ fun inputText(
         textStyle = TextStyle(
             color = colorText,
             fontWeight = FontWeight.Normal,
-            fontSize = 20.sp,
+            fontSize = 15.sp,
         ),
         colors = TextFieldDefaults.textFieldColors(
             textColor = colorText,
@@ -403,17 +378,15 @@ fun inputText(
                 focusManager.moveFocus(FocusDirection.Down)
             }
         ),
-        modifier = Modifier
-            .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
-            .fillMaxWidth(),
+        modifier = modifier
     )
 }
 
 @Composable
 fun radioGender() {
     val colorIcon = Color(0xff164583)
-    val gender_female = stringResource(R.string.gender_female)
-    val gender_male = stringResource(R.string.gender_male)
+    val genderFemale = stringResource(R.string.gender_female)
+    val genderMale = stringResource(R.string.gender_male)
     Icon(
         painter = painterResource(id = R.drawable.round_group_24),
         contentDescription = null,
@@ -423,15 +396,15 @@ fun radioGender() {
     Spacer(modifier = Modifier.width(20.dp))
     Text(text = stringResource(id = R.string.gender))
     Spacer(modifier = Modifier.width(16.dp))
-    var sex by remember { mutableStateOf(gender_female) }
+    var sex by remember { mutableStateOf(genderFemale) }
     RadioButton(
-        selected = sex === gender_female,
-        onClick = { sex = gender_female }
+        selected = sex === genderFemale,
+        onClick = { sex = genderFemale }
     )
     Text(text = stringResource(id = R.string.gender_female))
     RadioButton(
-        selected = sex === gender_male,
-        onClick = { sex = gender_male }
+        selected = sex === genderMale,
+        onClick = { sex = genderMale }
     )
     Text(text = stringResource(id = R.string.gender_male))
 }
@@ -449,7 +422,6 @@ fun selectBirthday() {
     Text(text = stringResource(id = R.string.birthdate))
     Spacer(modifier = Modifier.width(16.dp))
     selectDatePicker();
-
 }
 
 @Composable
@@ -469,18 +441,15 @@ fun selectStudy() {
 @Composable
 fun selectDatePicker() {
     val colorIcon = Color(0xffa1cafe)
-
     val mContext = LocalContext.current
     val mYear: Int
     val mMonth: Int
     val mDay: Int
     val mCalendar = Calendar.getInstance()
-
     mYear = mCalendar.get(Calendar.YEAR)
     mMonth = mCalendar.get(Calendar.MONTH)
     mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
     mCalendar.time = Date()
-
 
     val selectButtonString = stringResource(R.string.select_button)
     val mDate = remember { mutableStateOf(value = selectButtonString) }
@@ -503,11 +472,9 @@ fun schoolDropdownMenu() {
     var isExpanded by remember {
         mutableStateOf(false)
     }
-
     var grade by remember {
         mutableStateOf("")
     }
-
     val labelScolarityPrimary = stringResource(R.string.scolarity_primary)
     val labelScolaritySecundary = stringResource(R.string.scolarity_secundary)
     val labelScolarityBachelor = stringResource(R.string.scolarity_bachelor)
@@ -539,7 +506,6 @@ fun schoolDropdownMenu() {
                 cursorColor = colorText,
                 containerColor = colorBack,
                 focusedLabelColor = colorLabel,
-
                 ),
             modifier = Modifier.menuAnchor()
         )
@@ -587,18 +553,5 @@ fun schoolDropdownMenu() {
                 }
             )
         }
-    }
-}
-
-@Composable
-fun rememberLazyListState(
-    initialFirstVisibleItemIndex: Int = 0,
-    initialFirstVisibleItemScrollOffset: Int = 0
-): LazyListState {
-    return rememberSaveable(saver = LazyListState.Saver) {
-        LazyListState(
-            initialFirstVisibleItemIndex,
-            initialFirstVisibleItemScrollOffset
-        )
     }
 }
