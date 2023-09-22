@@ -62,23 +62,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.lifecycle.ViewModel
+import co.edu.udea.compumovil.gr04_20232.labs1.InfoViewModel
 import co.edu.udea.compumovil.gr04_20232.labs1.R
 
 @Composable
-fun PersonalDataScreen(onNextButton: (Int) -> Unit) {
+fun PersonalDataScreen(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
     // NO TOCAR
     val screenOrientation = LocalConfiguration.current.orientation
     when (screenOrientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
-            personalDataHorizontalLayout(onNextButton)
+            personalDataHorizontalLayout(onNextButton, viewModel)
         }
 
         Configuration.ORIENTATION_PORTRAIT -> {
-            personalDataVerticalLayout(onNextButton)
+            personalDataVerticalLayout(onNextButton, viewModel)
         }
 
         else -> {
-            personalDataVerticalLayout(onNextButton)
+            personalDataVerticalLayout(onNextButton, viewModel)
         }
     }
 }
@@ -86,7 +88,7 @@ fun PersonalDataScreen(onNextButton: (Int) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit) {
+fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
     val gender_female = stringResource(R.string.gender_female)
     val gender_male = stringResource(R.string.gender_male)
     Column(
@@ -234,7 +236,7 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit) {
 
 
 @Composable
-fun personalDataVerticalLayout(onNextButton: (Int) -> Unit) {
+fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
     val gender_female = stringResource(R.string.gender_female)
     val gender_male = stringResource(R.string.gender_male)
     BoxWithConstraints {
@@ -262,7 +264,11 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit) {
                         stringResource(id = R.string.firstname),
                         R.drawable.round_person_24,
                         KeyboardType.Text,
-                        KeyboardCapitalization.Words
+                        KeyboardCapitalization.Words,
+                        viewModel.firstName,
+                        onValueChange = { newValue ->
+                            viewModel.firstName = newValue
+                        }
                     )
                 }
                 Row(
@@ -274,7 +280,11 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit) {
                         stringResource(id = R.string.lastname),
                         R.drawable.round_person_add_24,
                         KeyboardType.Text,
-                        KeyboardCapitalization.Words
+                        KeyboardCapitalization.Words,
+                        viewModel.firstName,
+                        onValueChange = { newValue ->
+                            viewModel.lastName = newValue
+                        }
                     )
                 }
                 Row(
@@ -348,7 +358,10 @@ fun inputText(
     input: String,
     @DrawableRes icono: Int,
     keyboard: KeyboardType,
-    autoCapitalization: KeyboardCapitalization
+    autoCapitalization: KeyboardCapitalization,
+    viewModelValue: String,
+    onValueChange: (String) -> Unit
+
 ) {
     val colorIcon = Color(0xff164583)
     val colorText = Color(0xff043f8a)
@@ -361,12 +374,11 @@ fun inputText(
         modifier = Modifier.size(48.dp),
         tint = colorIcon
     )
-    var inputName by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
 
     OutlinedTextField(
-        value = inputName,
-        onValueChange = { inputName = it },
+        value = viewModelValue,
+        onValueChange = { onValueChange(it) },
         label = { Text(input) },
         maxLines = 1,
         textStyle = TextStyle(

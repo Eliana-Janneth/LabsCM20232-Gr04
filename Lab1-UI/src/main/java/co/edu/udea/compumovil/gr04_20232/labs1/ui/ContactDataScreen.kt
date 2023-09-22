@@ -44,6 +44,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import co.edu.udea.compumovil.gr04_20232.labs1.InfoViewModel
 import co.edu.udea.compumovil.gr04_20232.labs1.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -72,7 +73,7 @@ object CountryApiService {
 
 
 @Composable
-fun ContactDataScreen() {
+fun ContactDataScreen(viewModel: InfoViewModel) {
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
@@ -99,7 +100,11 @@ fun ContactDataScreen() {
                         stringResource(id = R.string.phone),
                         R.drawable.round_local_phone_24,
                         KeyboardType.Number,
-                        KeyboardCapitalization.None
+                        KeyboardCapitalization.None,
+                        viewModel.phone,
+                        onValueChange = { newValue ->
+                            viewModel.phone = newValue
+                        }
                     )
                 }
                 Row(
@@ -111,7 +116,11 @@ fun ContactDataScreen() {
                         stringResource(id = R.string.email),
                         R.drawable.round_email_24,
                         KeyboardType.Email,
-                        KeyboardCapitalization.None
+                        KeyboardCapitalization.None,
+                        viewModel.email,
+                        onValueChange = { newValue ->
+                            viewModel.email = newValue
+                        }
                     )
                 }
                 Spacer(modifier = Modifier.width(20.dp))
@@ -125,7 +134,11 @@ fun ContactDataScreen() {
                         stringResource(id = R.string.address),
                         R.drawable.round_share_location_24,
                         KeyboardType.Text,
-                        KeyboardCapitalization.Sentences
+                        KeyboardCapitalization.Sentences,
+                        viewModel.address,
+                        onValueChange = { newValue ->
+                            viewModel.address = newValue
+                        }
                     )
                 }
                 Row(
