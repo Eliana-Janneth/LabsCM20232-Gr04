@@ -138,7 +138,7 @@ fun contactDataHorizontalLayout(viewModel: InfoViewModel) {
                     }
                 )
             }
-            listHorizontalCountryDropdown()
+            listHorizontalCountryDropdown(viewModel)
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -240,7 +240,7 @@ fun contactDataVerticalLayout(viewModel: InfoViewModel) {
                 )
             }
             Spacer(modifier = Modifier.width(20.dp))
-            listVerticalCountryDropdown()
+            listVerticalCountryDropdown(viewModel)
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -298,7 +298,7 @@ fun contactDataVerticalLayout(viewModel: InfoViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun listHorizontalCountryDropdown() {
+fun listHorizontalCountryDropdown(viewModel: InfoViewModel) {
     var selectedCountry by remember { mutableStateOf<CountryData?>(null) }
     var selectedCity by remember { mutableStateOf<String?>(null) }
     var countries by remember { mutableStateOf<List<CountryData>>(emptyList()) }
@@ -309,6 +309,18 @@ fun listHorizontalCountryDropdown() {
     val colorBack = Color(0xffa1cafe)
     val colorLabel = Color(0xff002a61)
     val colorIcon = Color(0xff164583)
+    val labelCountry:String
+    val labelCity:String
+    if (viewModel.country.isNullOrEmpty()) {
+        labelCountry = stringResource(id = R.string.country)
+    } else {
+        labelCountry = viewModel.country
+    }
+    if (viewModel.city.isNullOrEmpty()) {
+        labelCity = stringResource(id = R.string.city)
+    } else {
+        labelCity = viewModel.city
+    }
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -349,7 +361,7 @@ fun listHorizontalCountryDropdown() {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCountryExpanded)
                     },
                     placeholder = {
-                        Text(text = stringResource(id = R.string.country))
+                        Text(text = labelCountry)
                     },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         textColor = colorText,
@@ -375,6 +387,7 @@ fun listHorizontalCountryDropdown() {
                                 selectedCountry = country
                                 isCountryExpanded = false
                                 cities = country.cities
+                                viewModel.country = country.country
                             }
                         )
                     }
@@ -402,7 +415,7 @@ fun listHorizontalCountryDropdown() {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCityExpanded)
                     },
                     placeholder = {
-                        Text(text = stringResource(id = R.string.city))
+                        Text(text = labelCity)
                     },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         textColor = colorText,
@@ -427,6 +440,7 @@ fun listHorizontalCountryDropdown() {
                             onClick = {
                                 selectedCity = city
                                 isCityExpanded = false
+                                viewModel.city = city
                             }
                         )
                     }
@@ -438,7 +452,7 @@ fun listHorizontalCountryDropdown() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun listVerticalCountryDropdown() {
+fun listVerticalCountryDropdown(viewModel: InfoViewModel) {
     var selectedCountry by remember { mutableStateOf<CountryData?>(null) }
     var selectedCity by remember { mutableStateOf<String?>(null) }
     var countries by remember { mutableStateOf<List<CountryData>>(emptyList()) }
@@ -449,6 +463,18 @@ fun listVerticalCountryDropdown() {
     val colorBack = Color(0xffa1cafe)
     val colorLabel = Color(0xff002a61)
     val colorIcon = Color(0xff164583)
+    val labelCountry:String
+    val labelCity:String
+    if (viewModel.country.isNullOrEmpty()) {
+        labelCountry = stringResource(id = R.string.country)
+    } else {
+        labelCountry = viewModel.country
+    }
+    if (viewModel.city.isNullOrEmpty()) {
+        labelCity = stringResource(id = R.string.city)
+    } else {
+        labelCity = viewModel.city
+    }
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
@@ -483,7 +509,7 @@ fun listVerticalCountryDropdown() {
                 TextField(
                     value = selectedCountry?.country ?: "", onValueChange = {}, readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCountryExpanded) },
-                    placeholder = { Text(text = stringResource(id = R.string.country)) },
+                    placeholder = { Text(text = labelCountry) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         textColor = colorText,
                         focusedIndicatorColor = Color.Transparent,
@@ -506,8 +532,8 @@ fun listVerticalCountryDropdown() {
                             onClick = {
                                 selectedCountry = country
                                 isCountryExpanded = false
-                                // Actualiza las ciudades para el país seleccionado
                                 cities = country.cities
+                                viewModel.country = country.country
                             }
                         )
                     }
@@ -542,7 +568,7 @@ fun listVerticalCountryDropdown() {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCityExpanded)
                     },
                     placeholder = {
-                        Text(text = stringResource(id = R.string.city))
+                        Text(text = labelCity)
                     },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         textColor = colorText,
@@ -567,6 +593,7 @@ fun listVerticalCountryDropdown() {
                             onClick = {
                                 selectedCity = city
                                 isCityExpanded = false
+                                viewModel.city = city
                             }
                         )
                     }

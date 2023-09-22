@@ -95,7 +95,9 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                 text = stringResource(id = R.string.personal_data_title),
                 fontSize = 28.sp,
                 color = colorTittle,
-                modifier = Modifier.fillMaxWidth().padding(top=5.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 5.dp),
                 textAlign = TextAlign.Center
             )
 
@@ -137,7 +139,7 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                 horizontalArrangement = Arrangement.Center,
 
                 ) {
-                radioGender()
+                radioGender(viewModel)
             }
 
             Row(
@@ -147,7 +149,7 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                selectBirthday()
+                selectBirthday(viewModel)
             }
 
             Row(
@@ -157,7 +159,7 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                 verticalAlignment = Alignment.CenterVertically
             )
             {
-                selectStudy()
+                selectStudy(viewModel)
             }
 
             Row(
@@ -208,7 +210,9 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
                 text = stringResource(id = R.string.personal_data_title),
                 fontSize = 28.sp,
                 color = colorTittle,
-                modifier = Modifier.fillMaxWidth().padding(top=15.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 15.dp),
                 textAlign = TextAlign.Center
             )
             Row(
@@ -251,7 +255,7 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
                     .padding(bottom = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                radioGender()
+                radioGender(viewModel)
             }
             Row(
                 modifier = Modifier
@@ -259,7 +263,7 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
                     .padding(bottom = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                selectBirthday()
+                selectBirthday(viewModel)
             }
 
             Row(
@@ -269,9 +273,8 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
                 verticalAlignment = Alignment.CenterVertically
             )
             {
-                selectStudy()
+                selectStudy(viewModel)
             }
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -382,10 +385,11 @@ fun inputText(
 }
 
 @Composable
-fun radioGender() {
+fun radioGender(viewModel: InfoViewModel) {
     val colorIcon = Color(0xff164583)
     val genderFemale = stringResource(R.string.gender_female)
     val genderMale = stringResource(R.string.gender_male)
+
     Icon(
         painter = painterResource(id = R.drawable.round_group_24),
         contentDescription = null,
@@ -395,21 +399,25 @@ fun radioGender() {
     Spacer(modifier = Modifier.width(20.dp))
     Text(text = stringResource(id = R.string.gender))
     Spacer(modifier = Modifier.width(16.dp))
-    var sex by remember { mutableStateOf(genderFemale) }
+    //var sex by remember { mutableStateOf(genderFemale) }
     RadioButton(
-        selected = sex === genderFemale,
-        onClick = { sex = genderFemale }
+        selected = viewModel.gender === genderFemale,
+        onClick = {
+            viewModel.gender = genderFemale
+        }
     )
     Text(text = stringResource(id = R.string.gender_female))
     RadioButton(
-        selected = sex === genderMale,
-        onClick = { sex = genderMale }
+        selected = viewModel.gender === genderMale,
+        onClick = {
+            viewModel.gender = genderMale
+        }
     )
     Text(text = stringResource(id = R.string.gender_male))
 }
 
 @Composable
-fun selectBirthday() {
+fun selectBirthday(viewModel: InfoViewModel) {
     val colorIcon = Color(0xff164583)
     Icon(
         painter = painterResource(id = R.drawable.round_calendar_month_24),
@@ -420,11 +428,11 @@ fun selectBirthday() {
     Spacer(modifier = Modifier.width(20.dp))
     Text(text = stringResource(id = R.string.birthdate))
     Spacer(modifier = Modifier.width(16.dp))
-    selectDatePicker();
+    selectDatePicker(viewModel);
 }
 
 @Composable
-fun selectStudy() {
+fun selectStudy(viewModel: InfoViewModel) {
     val colorIcon = Color(0xff164583)
     Icon(
         painter = painterResource(id = R.drawable.round_school_24),
@@ -433,12 +441,12 @@ fun selectStudy() {
         tint = colorIcon
     )
     Spacer(modifier = Modifier.width(20.dp))
-    schoolDropdownMenu();
+    schoolDropdownMenu(viewModel);
     Spacer(modifier = Modifier.width(10.dp))
 }
 
 @Composable
-fun selectDatePicker() {
+fun selectDatePicker(viewModel: InfoViewModel) {
     val colorIcon = Color(0xffa1cafe)
     val mContext = LocalContext.current
     val mYear: Int
@@ -449,35 +457,37 @@ fun selectDatePicker() {
     mMonth = mCalendar.get(Calendar.MONTH)
     mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
     mCalendar.time = Date()
+    val labelBirthdate: String
+    if (viewModel.birthdate.isNullOrEmpty()) {
+        labelBirthdate = stringResource(id = R.string.select_button)
+    } else {
+        labelBirthdate = viewModel.birthdate
+    }
 
-    val selectButtonString = stringResource(R.string.select_button)
-    val mDate = remember { mutableStateOf(value = selectButtonString) }
+    //val selectButtonString = stringResource(id = R.string.select_button)
+    val mDate = remember { mutableStateOf(value = labelBirthdate) }
     val mDatePickerDialog = DatePickerDialog(
         mContext,
         { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
             mDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
+            viewModel.birthdate = mDate.value
         }, mYear, mMonth, mDay
     )
-
     Button(onClick = {
         mDatePickerDialog.show()
     }, colors = ButtonDefaults.buttonColors(containerColor = colorIcon)) {
-        Text("${mDate.value}", color = Color.Black)
+        Text(labelBirthdate, color = Color.Black)
     }
 }
 
 @Composable
-fun schoolDropdownMenu() {
+fun schoolDropdownMenu(viewModel: InfoViewModel) {
     var isExpanded by remember {
         mutableStateOf(false)
     }
     var grade by remember {
         mutableStateOf("")
     }
-    val labelScolarityPrimary = stringResource(R.string.scolarity_primary)
-    val labelScolaritySecundary = stringResource(R.string.scolarity_secundary)
-    val labelScolarityBachelor = stringResource(R.string.scolarity_bachelor)
-    val labelScolarityOther = stringResource(R.string.scolarity_other)
 
     ExposedDropdownMenuBox(
         expanded = isExpanded,
@@ -489,6 +499,12 @@ fun schoolDropdownMenu() {
         val colorText = Color(0xff043f8a)
         val colorBack = Color(0xffa1cafe)
         val colorLabel = Color(0xff002a61)
+        val label: String
+        if (viewModel.scolarity.isNullOrEmpty()) {
+            label = stringResource(id = R.string.scolarity)
+        } else {
+            label = viewModel.scolarity
+        }
         TextField(
             value = grade,
             onValueChange = {},
@@ -497,7 +513,7 @@ fun schoolDropdownMenu() {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
             },
             placeholder = {
-                Text(text = stringResource(id = R.string.scolarity))
+                Text(text = label)
             },
             colors = ExposedDropdownMenuDefaults.textFieldColors(
                 textColor = colorText,
@@ -514,6 +530,20 @@ fun schoolDropdownMenu() {
                 isExpanded = false
             }
         ) {
+            val items = listOf(stringResource(id = R.string.scolarity_primary), stringResource(id = R.string.scolarity_secundary), stringResource(id = R.string.scolarity_bachelor), stringResource(id = R.string.scolarity_other))
+            items.forEach { item ->
+                DropdownMenuItem(
+                    onClick = {
+                        grade = item
+                        isExpanded = false
+                        viewModel.scolarity = item
+                    },
+                    text = {
+                        Text(text = item)
+                    }
+                )
+            }
+/*
             DropdownMenuItem(
                 text = {
                     Text(text = stringResource(id = R.string.scolarity_primary))
@@ -550,7 +580,7 @@ fun schoolDropdownMenu() {
                     grade = labelScolarityOther
                     isExpanded = false
                 }
-            )
+            )*/
         }
     }
 }
