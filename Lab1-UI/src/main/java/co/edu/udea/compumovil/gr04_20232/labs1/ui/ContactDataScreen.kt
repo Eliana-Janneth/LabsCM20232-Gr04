@@ -42,6 +42,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import co.edu.udea.compumovil.gr04_20232.labs1.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -49,8 +51,7 @@ import kotlinx.coroutines.withContext
 data class CountryData(
     val country: String,
     val cities: List<String>,
-
-    )
+)
 
 interface CountryApi {
     @Headers(
@@ -60,17 +61,23 @@ interface CountryApi {
     suspend fun getAllCountries(): List<CountryData>
 }
 
+object CountryApiService {
+    private const val BASE_URL = "https://apimocha.com/compumovil-lab-1/"
+    val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    val countryApi: CountryApi = retrofit.create(CountryApi::class.java)
+}
+
 
 @Composable
 fun ContactDataScreen() {
-
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
         val colorIcon = Color(0xff164583)
-
         if (maxWidth < 600.dp) {
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -88,21 +95,27 @@ fun ContactDataScreen() {
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    inputText(stringResource(id = R.string.phone), R.drawable.round_local_phone_24)
+                    inputText(
+                        stringResource(id = R.string.phone),
+                        R.drawable.round_local_phone_24,
+                        KeyboardType.Number,
+                        KeyboardCapitalization.None
+                    )
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    inputText(stringResource(id = R.string.email), R.drawable.round_email_24)
+                    inputText(
+                        stringResource(id = R.string.email),
+                        R.drawable.round_email_24,
+                        KeyboardType.Email,
+                        KeyboardCapitalization.None
+                    )
                 }
-
-
                 Spacer(modifier = Modifier.width(20.dp))
                 listCountryDropdown()
-
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -110,7 +123,9 @@ fun ContactDataScreen() {
                 ) {
                     inputText(
                         stringResource(id = R.string.address),
-                        R.drawable.round_share_location_24
+                        R.drawable.round_share_location_24,
+                        KeyboardType.Text,
+                        KeyboardCapitalization.Sentences
                     )
                 }
                 Row(
@@ -153,16 +168,6 @@ fun ContactDataScreen() {
     }
 }
 
-
-object CountryApiService {
-    private const val BASE_URL = "https://apimocha.com/compumovil-lab-1/"
-    val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    val countryApi: CountryApi = retrofit.create(CountryApi::class.java)
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

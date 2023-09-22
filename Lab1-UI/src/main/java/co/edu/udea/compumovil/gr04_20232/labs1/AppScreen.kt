@@ -25,12 +25,15 @@ fun ContactApp(
     navController: NavHostController = rememberNavController()
 ) {
 
-    NavHost(navController, startDestination = "personalData", modifier = Modifier.padding(PaddingValues(
-        start = 0.dp,
-        top = 25.dp,
-        end = 0.dp,
-        bottom = 0.dp
-    ))
+    NavHost(
+        navController, startDestination = "personalData", modifier = Modifier.padding(
+            PaddingValues(
+                start = 0.dp,
+                top = 25.dp,
+                end = 0.dp,
+                bottom = 0.dp
+            )
+        )
     ) {
         composable("personalData") {
             PersonalDataScreen(onNextButton = {
