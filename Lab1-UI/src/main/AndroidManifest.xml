@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ContactDataActivity"
+            android:name=".ui.ContactDataActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Labs20232Gr04">
