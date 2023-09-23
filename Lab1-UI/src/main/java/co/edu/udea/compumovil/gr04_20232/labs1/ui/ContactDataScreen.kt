@@ -43,10 +43,13 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.lifecycle.viewmodel.compose.viewModel
 import co.edu.udea.compumovil.gr04_20232.labs1.InfoViewModel
 import co.edu.udea.compumovil.gr04_20232.labs1.R
 import kotlinx.coroutines.Dispatchers
@@ -66,7 +69,7 @@ interface CountryApi {
 }
 
 object CountryApiService {
-    private const val BASE_URL = "https://apimocha.com/compumovil-lab-1/"
+    private const val BASE_URL = "https://apimocha.com/compumovil-lab-1.3/"
     val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
@@ -76,16 +79,10 @@ object CountryApiService {
 
 @Composable
 fun ContactDataScreen(viewModel: InfoViewModel) {
-    val screenOrientation = LocalConfiguration.current.orientation
-    when (screenOrientation) {
+    when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             contactDataHorizontalLayout(viewModel)
         }
-
-        Configuration.ORIENTATION_PORTRAIT -> {
-            contactDataVerticalLayout(viewModel)
-        }
-
         else -> {
             contactDataVerticalLayout(viewModel)
         }
@@ -93,7 +90,8 @@ fun ContactDataScreen(viewModel: InfoViewModel) {
 }
 
 @Composable
-fun contactDataHorizontalLayout(viewModel: InfoViewModel) {
+fun contactDataHorizontalLayout(infoViewModel: InfoViewModel = viewModel()) {
+    val infoUiState by infoViewModel.uiState.collectAsState()
     val screenTitle = stringResource(id = R.string.contact_data_title)
     val phone = stringResource(id = R.string.phone)
     val email = stringResource(id = R.string.email)
@@ -110,7 +108,7 @@ fun contactDataHorizontalLayout(viewModel: InfoViewModel) {
                 .background(colorBackground)
         ) {
             Text(
-                text = stringResource(id = R.string.contact_data_title),
+                text = screenTitle,
                 fontSize = 28.sp,
                 color = colorTittle,
                 modifier = Modifier.fillMaxWidth(),
@@ -123,28 +121,24 @@ fun contactDataHorizontalLayout(viewModel: InfoViewModel) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 inputText(
-                    stringResource(id = R.string.phone),
+                    phone,
                     R.drawable.round_local_phone_24,
                     KeyboardType.Number,
                     KeyboardCapitalization.None,
-                    viewModel.phone,
-                    onValueChange = { newValue ->
-                        viewModel.phone = newValue
-                    }
+                    infoUiState.phone,
+                    onValueChange = { infoViewModel.setPhone(it) }
                 )
                 Spacer(modifier = Modifier.width(15.dp))
                 inputText(
-                    stringResource(id = R.string.email),
+                    email,
                     R.drawable.round_email_24,
                     KeyboardType.Email,
                     KeyboardCapitalization.None,
-                    viewModel.email,
-                    onValueChange = { newValue ->
-                        viewModel.email = newValue
-                    }
+                    infoUiState.email,
+                    onValueChange = {infoViewModel.setEmail(it)}
                 )
             }
-            listHorizontalCountryDropdown(viewModel)
+            listHorizontalCountryDropdown()
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -152,14 +146,12 @@ fun contactDataHorizontalLayout(viewModel: InfoViewModel) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 inputText(
-                    stringResource(id = R.string.address),
+                    address,
                     R.drawable.round_share_location_24,
                     KeyboardType.Text,
                     KeyboardCapitalization.Sentences,
-                    viewModel.address,
-                    onValueChange = { newValue ->
-                        viewModel.address = newValue
-                    }
+                    infoUiState.address,
+                    onValueChange = {infoViewModel.setAddress(it)}
                 )
             }
             Row(
@@ -176,16 +168,16 @@ fun contactDataHorizontalLayout(viewModel: InfoViewModel) {
                         Log.i(
                             "", "${screenTitle.uppercase()}\n" +
                                     "---------------------------------------\n" +
-                                    "$phone = ${viewModel.phone}\n" +
-                                    "$email = ${viewModel.email}\n" +
-                                    "$country = ${viewModel.country}\n" +
-                                    if (!viewModel.city.isEmpty()) {
-                                        "$city = ${viewModel.city}\n"
+                                    "$phone = ${infoUiState.phone}\n" +
+                                    "$email = ${infoUiState.email}\n" +
+                                    "$country = ${infoUiState.country}\n" +
+                                    if (!infoUiState.city.isEmpty()) {
+                                        "$city = ${infoUiState.city}\n"
                                     } else {
                                         ""
                                     } +
-                                    if (!viewModel.address.isEmpty()) {
-                                        "$address = ${viewModel.address}\n"
+                                    if (!infoUiState.address.isEmpty()) {
+                                        "$address = ${infoUiState.address}\n"
                                     } else {
                                         ""
                                     }
@@ -194,7 +186,6 @@ fun contactDataHorizontalLayout(viewModel: InfoViewModel) {
                     modifier = Modifier.padding(end = 50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = colorBack)
                 ) {
-
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                     Text(
                         stringResource(id = R.string.save_button),
@@ -212,7 +203,8 @@ fun contactDataHorizontalLayout(viewModel: InfoViewModel) {
 }
 
 @Composable
-fun contactDataVerticalLayout(viewModel: InfoViewModel) {
+fun contactDataVerticalLayout(infoViewModel: InfoViewModel = viewModel()) {
+    val infoUiState by infoViewModel.uiState.collectAsState()
     val screenTitle = stringResource(id = R.string.contact_data_title)
     val phone = stringResource(id = R.string.phone)
     val email = stringResource(id = R.string.email)
@@ -228,7 +220,7 @@ fun contactDataVerticalLayout(viewModel: InfoViewModel) {
                 .background(colorBackground)
         ) {
             Text(
-                text = stringResource(id = R.string.contact_data_title),
+                text = screenTitle,
                 fontSize = 28.sp,
                 color = colorTittle,
                 modifier = Modifier.fillMaxWidth(),
@@ -241,14 +233,12 @@ fun contactDataVerticalLayout(viewModel: InfoViewModel) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 inputText(
-                    stringResource(id = R.string.phone),
+                    phone,
                     R.drawable.round_local_phone_24,
                     KeyboardType.Number,
                     KeyboardCapitalization.None,
-                    viewModel.phone,
-                    onValueChange = { newValue ->
-                        viewModel.phone = newValue
-                    }
+                    infoUiState.phone,
+                    onValueChange = { infoViewModel.setPhone(it)}
                 )
             }
             Row(
@@ -257,32 +247,35 @@ fun contactDataVerticalLayout(viewModel: InfoViewModel) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 inputText(
-                    stringResource(id = R.string.email),
+                    email,
                     R.drawable.round_email_24,
                     KeyboardType.Email,
                     KeyboardCapitalization.None,
-                    viewModel.email,
-                    onValueChange = { newValue ->
-                        viewModel.email = newValue
-                    }
+                    infoUiState.email,
+                    onValueChange = {infoViewModel.setEmail(it)}
                 )
             }
             Spacer(modifier = Modifier.width(20.dp))
-            listVerticalCountryDropdown(viewModel)
+
+            listVerticalCountryDropdown(
+                infoUiState.country,
+                infoUiState.city,
+                onChangeCountry = {infoViewModel.setCountry(it)},
+                onChangeCity = {infoViewModel.setCity(it)},
+            )
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 inputText(
-                    stringResource(id = R.string.address),
+                    address,
                     R.drawable.round_share_location_24,
                     KeyboardType.Text,
                     KeyboardCapitalization.Sentences,
-                    viewModel.address,
-                    onValueChange = { newValue ->
-                        viewModel.address = newValue
-                    }
+                    infoUiState.address,
+                    onValueChange = {infoViewModel.setAddress(it)}
                 )
             }
             Row(
@@ -299,16 +292,16 @@ fun contactDataVerticalLayout(viewModel: InfoViewModel) {
                         Log.i(
                             "", "${screenTitle.uppercase()}\n" +
                                     "---------------------------------------\n" +
-                                    "$phone = ${viewModel.phone}\n" +
-                                    "$email = ${viewModel.email}\n" +
-                                    "$country = ${viewModel.country}\n" +
-                                    if (!viewModel.city.isEmpty()) {
-                                        "$city = ${viewModel.city}\n"
+                                    "$phone = ${infoUiState.phone}\n" +
+                                    "$email = ${infoUiState.email}\n" +
+                                    "$country = ${infoUiState.country}\n" +
+                                    if (!infoUiState.city.isEmpty()) {
+                                        "$city = ${infoUiState.city}\n"
                                     } else {
                                         ""
                                     } +
-                                    if (!viewModel.address.isEmpty()) {
-                                        "$address = ${viewModel.address}\n"
+                                    if (!infoUiState.address.isEmpty()) {
+                                        "$address = ${infoUiState.address}\n"
                                     } else {
                                         ""
                                     }
@@ -323,7 +316,6 @@ fun contactDataVerticalLayout(viewModel: InfoViewModel) {
                     ),
                     colors = ButtonDefaults.buttonColors(containerColor = colorBack)
                 ) {
-
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                     Text(
                         stringResource(id = R.string.save_button),
@@ -342,7 +334,9 @@ fun contactDataVerticalLayout(viewModel: InfoViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun listHorizontalCountryDropdown(viewModel: InfoViewModel) {
+fun listHorizontalCountryDropdown(infoViewModel: InfoViewModel = viewModel()) {
+    val infoUiState by infoViewModel.uiState.collectAsState()
+
     var selectedCountry by remember { mutableStateOf<CountryData?>(null) }
     var selectedCity by remember { mutableStateOf<String?>(null) }
     var countries by remember { mutableStateOf<List<CountryData>>(emptyList()) }
@@ -355,15 +349,15 @@ fun listHorizontalCountryDropdown(viewModel: InfoViewModel) {
     val colorIcon = Color(0xff164583)
     val labelCountry: String
     val labelCity: String
-    if (viewModel.country.isNullOrEmpty()) {
+    if (infoUiState.country.isNullOrEmpty()) {
         labelCountry = stringResource(id = R.string.country)
     } else {
-        labelCountry = viewModel.country
+        labelCountry = infoUiState.country
     }
-    if (viewModel.city.isNullOrEmpty()) {
+    if (infoUiState.city.isNullOrEmpty()) {
         labelCity = stringResource(id = R.string.city)
     } else {
-        labelCity = viewModel.city
+        labelCity = infoUiState.city
     }
 
     LaunchedEffect(Unit) {
@@ -431,7 +425,7 @@ fun listHorizontalCountryDropdown(viewModel: InfoViewModel) {
                                 selectedCountry = country
                                 isCountryExpanded = false
                                 cities = country.cities
-                                viewModel.country = country.country
+                                infoViewModel.setCountry(country.country)
                             }
                         )
                     }
@@ -484,7 +478,7 @@ fun listHorizontalCountryDropdown(viewModel: InfoViewModel) {
                             onClick = {
                                 selectedCity = city
                                 isCityExpanded = false
-                                viewModel.city = city
+                                infoViewModel.setCity(city)
                             }
                         )
                     }
@@ -496,28 +490,33 @@ fun listHorizontalCountryDropdown(viewModel: InfoViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun listVerticalCountryDropdown(viewModel: InfoViewModel) {
-    var selectedCountry by remember { mutableStateOf<CountryData?>(null) }
-    var selectedCity by remember { mutableStateOf<String?>(null) }
-    var countries by remember { mutableStateOf<List<CountryData>>(emptyList()) }
-    var cities by remember { mutableStateOf<List<String>>(emptyList()) }
-    var isCountryExpanded by remember { mutableStateOf(false) }
-    var isCityExpanded by remember { mutableStateOf(false) }
+fun listVerticalCountryDropdown(
+    countryValue: String,
+    cityValue: String,
+    onChangeCountry: (String) -> Unit,
+    onChangeCity: (String) -> Unit
+) {
+    var selectedCountry by rememberSaveable { mutableStateOf<CountryData?>(null) }
+    var selectedCity by rememberSaveable { mutableStateOf<String?>(null) }
+    var countries by rememberSaveable { mutableStateOf<List<CountryData>>(emptyList()) }
+    var cities by rememberSaveable { mutableStateOf<List<String>>(emptyList()) }
+    var isCountryExpanded by rememberSaveable { mutableStateOf(false) }
+    var isCityExpanded by rememberSaveable { mutableStateOf(false) }
     val colorText = Color(0xff043f8a)
     val colorBack = Color(0xffa1cafe)
     val colorLabel = Color(0xff002a61)
     val colorIcon = Color(0xff164583)
     val labelCountry: String
     val labelCity: String
-    if (viewModel.country.isNullOrEmpty()) {
+    if (countryValue.isNullOrEmpty()) {
         labelCountry = stringResource(id = R.string.country)
     } else {
-        labelCountry = viewModel.country
+        labelCountry = countryValue
     }
-    if (viewModel.city.isNullOrEmpty()) {
+    if (cityValue.isNullOrEmpty()) {
         labelCity = stringResource(id = R.string.city)
     } else {
-        labelCity = viewModel.city
+        labelCity = cityValue
     }
 
     LaunchedEffect(Unit) {
@@ -577,7 +576,7 @@ fun listVerticalCountryDropdown(viewModel: InfoViewModel) {
                                 selectedCountry = country
                                 isCountryExpanded = false
                                 cities = country.cities
-                                viewModel.country = country.country
+                                onChangeCountry(country.country)
                             }
                         )
                     }
@@ -637,7 +636,7 @@ fun listVerticalCountryDropdown(viewModel: InfoViewModel) {
                             onClick = {
                                 selectedCity = city
                                 isCityExpanded = false
-                                viewModel.city = city
+                                onChangeCity(city)
                             }
                         )
                     }
@@ -646,4 +645,3 @@ fun listVerticalCountryDropdown(viewModel: InfoViewModel) {
         }
     }
 }
-

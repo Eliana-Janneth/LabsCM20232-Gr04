@@ -50,11 +50,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.Date
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
@@ -62,37 +61,36 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.toUpperCase
+import androidx.lifecycle.viewmodel.compose.viewModel
 import co.edu.udea.compumovil.gr04_20232.labs1.InfoViewModel
 import co.edu.udea.compumovil.gr04_20232.labs1.R
 
 @Composable
-fun PersonalDataScreen(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
-    val screenOrientation = LocalConfiguration.current.orientation
-    when (screenOrientation) {
+fun PersonalDataScreen(onNextButton: (Int) -> Unit) {
+    when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
-            personalDataHorizontalLayout(onNextButton, viewModel)
-        }
-
-        Configuration.ORIENTATION_PORTRAIT -> {
-            personalDataVerticalLayout(onNextButton, viewModel)
+            personalDataHorizontalLayout(onNextButton)
         }
 
         else -> {
-            personalDataVerticalLayout(onNextButton, viewModel)
+            personalDataVerticalLayout(onNextButton)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
+fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, infoViewModel: InfoViewModel = viewModel()) {
+
+    val infoUiState by infoViewModel.uiState.collectAsState()
+
     val screenTitle = stringResource(id = R.string.personal_data_title)
     val firstname = stringResource(id = R.string.firstname)
     val lastName = stringResource(id = R.string.lastname)
     val gender = stringResource(id = R.string.gender)
     val birthdate = stringResource(id = R.string.birthdate)
-    val scolarity = stringResource(id = R.string.scolarity)
+    val scholarship = stringResource(id = R.string.scolarity)
+
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
@@ -123,10 +121,8 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                     R.drawable.round_person_24,
                     KeyboardType.Text,
                     KeyboardCapitalization.Words,
-                    viewModel.firstName,
-                    onValueChange = { newValue ->
-                        viewModel.firstName = newValue
-                    }
+                    infoUiState.firstName,
+                    onValueChange = { infoViewModel.setFirstName(it) }
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 inputText(
@@ -134,10 +130,8 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                     R.drawable.round_person_add_24,
                     KeyboardType.Text,
                     KeyboardCapitalization.Words,
-                    viewModel.lastName,
-                    onValueChange = { newValue ->
-                        viewModel.lastName = newValue
-                    }
+                    infoUiState.lastName,
+                    onValueChange = { infoViewModel.setLastName(it) }
                 )
             }
 
@@ -149,7 +143,7 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                 horizontalArrangement = Arrangement.Center,
 
                 ) {
-                radioGender(viewModel)
+                radioGender()
             }
 
             Row(
@@ -159,7 +153,7 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                selectBirthday(viewModel)
+                selectBirthday()
             }
 
             Row(
@@ -169,7 +163,7 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                 verticalAlignment = Alignment.CenterVertically
             )
             {
-                selectStudy(viewModel)
+                selectStudy()
             }
 
             Row(
@@ -187,16 +181,16 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                         Log.i(
                             "", "${screenTitle.uppercase()}\n" +
                                     "---------------------------------------\n" +
-                                    "$firstname= ${viewModel.firstName}\n" +
-                                    "$lastName = ${viewModel.lastName}\n" +
-                                    if (!viewModel.gender.isEmpty()) {
-                                        "$gender = ${viewModel.gender}\n"
+                                    "$firstname= ${infoUiState.firstName}\n" +
+                                    "$lastName = ${infoUiState.lastName}\n" +
+                                    if (!infoUiState.gender.isEmpty()) {
+                                        "$gender = ${infoUiState.gender}\n"
                                     } else {
                                         ""
                                     }
-                                    + "$birthdate = ${viewModel.birthdate}\n" +
-                                    if (!viewModel.scolarity.isEmpty()) {
-                                        "$scolarity = ${viewModel.scolarity}\n"
+                                    + "$birthdate = ${infoUiState.birthdate}\n" +
+                                    if (!infoUiState.scholarship.isEmpty()) {
+                                        "$scholarship = ${infoUiState.scholarship}\n"
                                     } else {
                                         ""
                                     }
@@ -223,13 +217,15 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
 
 
 @Composable
-fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
+fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, infoViewModel: InfoViewModel = viewModel()) {
+    val infoUiState by infoViewModel.uiState.collectAsState()
+
     val screenTitle = stringResource(id = R.string.personal_data_title)
     val firstname = stringResource(id = R.string.firstname)
     val lastName = stringResource(id = R.string.lastname)
     val gender = stringResource(id = R.string.gender)
     val birthdate = stringResource(id = R.string.birthdate)
-    val scolarity = stringResource(id = R.string.scolarity)
+    val scholarship = stringResource(id = R.string.scolarity)
 
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
@@ -259,10 +255,8 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
                     R.drawable.round_person_24,
                     KeyboardType.Text,
                     KeyboardCapitalization.Words,
-                    viewModel.firstName,
-                    onValueChange = { newValue ->
-                        viewModel.firstName = newValue
-                    }
+                    infoUiState.firstName,
+                    onValueChange = { infoViewModel.setFirstName(it) }
                 )
             }
 
@@ -276,10 +270,8 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
                     R.drawable.round_person_add_24,
                     KeyboardType.Text,
                     KeyboardCapitalization.Words,
-                    viewModel.lastName,
-                    onValueChange = { newValue ->
-                        viewModel.lastName = newValue
-                    }
+                    infoUiState.lastName,
+                    onValueChange = { infoViewModel.setLastName(it) }
                 )
             }
 
@@ -289,7 +281,7 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
                     .padding(bottom = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                radioGender(viewModel)
+                radioGender()
             }
             Row(
                 modifier = Modifier
@@ -297,7 +289,7 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
                     .padding(bottom = 20.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                selectBirthday(viewModel)
+                selectBirthday()
             }
 
             Row(
@@ -307,7 +299,7 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
                 verticalAlignment = Alignment.CenterVertically
             )
             {
-                selectStudy(viewModel)
+                selectStudy()
             }
             Row(
                 modifier = Modifier
@@ -324,16 +316,16 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
                         Log.i(
                             "", "${screenTitle.uppercase()}\n" +
                                     "---------------------------------------\n" +
-                                    "$firstname= ${viewModel.firstName}\n" +
-                                    "$lastName = ${viewModel.lastName}\n" +
-                                    if (!viewModel.gender.isEmpty()) {
-                                        "$gender = ${viewModel.gender}\n"
+                                    "$firstname = ${infoUiState.firstName}\n" +
+                                    "$lastName = ${infoUiState.lastName}\n" +
+                                    if (!infoUiState.gender.isEmpty()) {
+                                        "$gender = ${infoUiState.gender}\n"
                                     } else {
                                         ""
                                     }
-                                    + "$birthdate = ${viewModel.birthdate}\n" +
-                                    if (!viewModel.scolarity.isEmpty()) {
-                                        "$scolarity = ${viewModel.scolarity}\n"
+                                    + "$birthdate = ${infoUiState.birthdate}\n" +
+                                    if (!infoUiState.scholarship.isEmpty()) {
+                                        "$scholarship = ${infoUiState.scholarship}\n"
                                     } else {
                                         ""
                                     }
@@ -378,14 +370,7 @@ fun inputText(
     val colorText = Color(0xff043f8a)
     val colorBack = Color(0xffa1cafe)
     val colorLabel = Color(0xff002a61)
-    val screenOrientation = LocalConfiguration.current.orientation
-    val modifier = when (screenOrientation) {
-        Configuration.ORIENTATION_PORTRAIT -> {
-            Modifier
-                .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
-                .fillMaxWidth()
-        }
-
+    val modifier = when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             Modifier
                 .padding(8.dp)
@@ -438,7 +423,9 @@ fun inputText(
 }
 
 @Composable
-fun radioGender(viewModel: InfoViewModel) {
+fun radioGender(infoViewModel: InfoViewModel = viewModel()) {
+    val infoUiState by infoViewModel.uiState.collectAsState()
+
     val colorIcon = Color(0xff164583)
     val genderFemale = stringResource(R.string.gender_female)
     val genderMale = stringResource(R.string.gender_male)
@@ -454,23 +441,19 @@ fun radioGender(viewModel: InfoViewModel) {
     Spacer(modifier = Modifier.width(16.dp))
     //var sex by remember { mutableStateOf(genderFemale) }
     RadioButton(
-        selected = viewModel.gender === genderFemale,
-        onClick = {
-            viewModel.gender = genderFemale
-        }
+        selected = infoUiState.gender === genderFemale,
+        onClick = { infoViewModel.setGender(genderFemale) }
     )
     Text(text = stringResource(id = R.string.gender_female))
     RadioButton(
-        selected = viewModel.gender === genderMale,
-        onClick = {
-            viewModel.gender = genderMale
-        }
+        selected = infoUiState.gender === genderMale,
+        onClick = { infoViewModel.setGender(genderMale) }
     )
     Text(text = stringResource(id = R.string.gender_male))
 }
 
 @Composable
-fun selectBirthday(viewModel: InfoViewModel) {
+fun selectBirthday() {
     val colorIcon = Color(0xff164583)
     Icon(
         painter = painterResource(id = R.drawable.round_calendar_month_24),
@@ -481,11 +464,11 @@ fun selectBirthday(viewModel: InfoViewModel) {
     Spacer(modifier = Modifier.width(20.dp))
     Text(text = stringResource(id = R.string.birthdate))
     Spacer(modifier = Modifier.width(16.dp))
-    selectDatePicker(viewModel);
+    selectDatePicker();
 }
 
 @Composable
-fun selectStudy(viewModel: InfoViewModel) {
+fun selectStudy() {
     val colorIcon = Color(0xff164583)
     Icon(
         painter = painterResource(id = R.drawable.round_school_24),
@@ -494,36 +477,39 @@ fun selectStudy(viewModel: InfoViewModel) {
         tint = colorIcon
     )
     Spacer(modifier = Modifier.width(20.dp))
-    schoolDropdownMenu(viewModel);
+    schoolDropdownMenu();
     Spacer(modifier = Modifier.width(10.dp))
 }
 
 @Composable
-fun selectDatePicker(viewModel: InfoViewModel) {
+fun selectDatePicker(infoViewModel: InfoViewModel = viewModel()) {
+    val infoUiState by infoViewModel.uiState.collectAsState()
+
     val colorIcon = Color(0xffa1cafe)
     val mContext = LocalContext.current
     val mYear: Int
     val mMonth: Int
     val mDay: Int
     val mCalendar = Calendar.getInstance()
+
     mYear = mCalendar.get(Calendar.YEAR)
     mMonth = mCalendar.get(Calendar.MONTH)
     mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
     mCalendar.time = Date()
+
     val labelBirthdate: String
-    if (viewModel.birthdate.isNullOrEmpty()) {
+    if (infoUiState.birthdate.isNullOrEmpty()) {
         labelBirthdate = stringResource(id = R.string.select_button)
     } else {
-        labelBirthdate = viewModel.birthdate
+        labelBirthdate = infoUiState.birthdate
     }
 
-    //val selectButtonString = stringResource(id = R.string.select_button)
     val mDate = remember { mutableStateOf(value = labelBirthdate) }
     val mDatePickerDialog = DatePickerDialog(
         mContext,
         { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
             mDate.value = "$mDayOfMonth/${mMonth + 1}/$mYear"
-            viewModel.birthdate = mDate.value
+            infoViewModel.setBirthdate(mDate.value)
         }, mYear, mMonth, mDay
     )
     Button(onClick = {
@@ -534,7 +520,9 @@ fun selectDatePicker(viewModel: InfoViewModel) {
 }
 
 @Composable
-fun schoolDropdownMenu(viewModel: InfoViewModel) {
+fun schoolDropdownMenu(infoViewModel: InfoViewModel = viewModel()) {
+    val infoUiState by infoViewModel.uiState.collectAsState()
+
     var isExpanded by remember {
         mutableStateOf(false)
     }
@@ -553,10 +541,10 @@ fun schoolDropdownMenu(viewModel: InfoViewModel) {
         val colorBack = Color(0xffa1cafe)
         val colorLabel = Color(0xff002a61)
         val label: String
-        if (viewModel.scolarity.isNullOrEmpty()) {
+        if (infoUiState.scholarship.isNullOrEmpty()) {
             label = stringResource(id = R.string.scolarity)
         } else {
-            label = viewModel.scolarity
+            label = infoUiState.scholarship
         }
         TextField(
             value = grade,
@@ -594,51 +582,13 @@ fun schoolDropdownMenu(viewModel: InfoViewModel) {
                     onClick = {
                         grade = item
                         isExpanded = false
-                        viewModel.scolarity = item
+                        infoViewModel.setScholarship(item)
                     },
                     text = {
                         Text(text = item)
                     }
                 )
             }
-            /*
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = stringResource(id = R.string.scolarity_primary))
-                            },
-                            onClick = {
-                                grade = labelScolarityPrimary
-                                isExpanded = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = stringResource(id = R.string.scolarity_secundary))
-                            },
-                            onClick = {
-                                grade = labelScolaritySecundary
-                                isExpanded = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = stringResource(id = R.string.scolarity_bachelor))
-                            },
-                            onClick = {
-                                grade = labelScolarityBachelor
-                                isExpanded = false
-                            }
-                        )
-
-                        DropdownMenuItem(
-                            text = {
-                                Text(text = stringResource(id = R.string.scolarity_other))
-                            },
-                            onClick = {
-                                grade = labelScolarityOther
-                                isExpanded = false
-                            }
-                        )*/
         }
     }
 }

@@ -4,14 +4,12 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import co.edu.udea.compumovil.gr04_20232.labs1.ui.ContactDataScreen
 import co.edu.udea.compumovil.gr04_20232.labs1.ui.PersonalDataScreen
@@ -39,7 +37,7 @@ fun ContactApp(
         composable("personalData") {
             PersonalDataScreen(onNextButton = {
                 navController.navigate("contactData")
-            }, viewModel = infoViewModel)
+            })
         }
         composable("contactData") {
             ContactDataScreen(viewModel = infoViewModel)
