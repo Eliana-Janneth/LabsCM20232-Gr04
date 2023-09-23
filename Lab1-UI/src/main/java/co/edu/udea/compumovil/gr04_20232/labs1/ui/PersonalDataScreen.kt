@@ -53,6 +53,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalConfiguration
@@ -71,7 +72,6 @@ fun PersonalDataScreen(onNextButton: (Int) -> Unit) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             personalDataHorizontalLayout(onNextButton)
         }
-
         else -> {
             personalDataVerticalLayout(onNextButton)
         }
@@ -80,17 +80,25 @@ fun PersonalDataScreen(onNextButton: (Int) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, infoViewModel: InfoViewModel = viewModel()) {
-
+fun personalDataHorizontalLayout(
+    onNextButton: (Int) -> Unit,
+    infoViewModel: InfoViewModel = viewModel()
+) {
     val infoUiState by infoViewModel.uiState.collectAsState()
-
     val screenTitle = stringResource(id = R.string.personal_data_title)
     val firstname = stringResource(id = R.string.firstname)
     val lastName = stringResource(id = R.string.lastname)
     val gender = stringResource(id = R.string.gender)
     val birthdate = stringResource(id = R.string.birthdate)
     val scholarship = stringResource(id = R.string.scolarity)
-
+    var validation by remember {
+        mutableStateOf(false)
+    }
+    DisposableEffect(infoUiState.firstName, infoUiState.lastName, infoUiState.birthdate) {
+        validation =
+            !infoUiState.firstName.isNullOrEmpty() and !infoUiState.lastName.isNullOrEmpty() and !infoUiState.birthdate.isNullOrEmpty()
+        onDispose { }
+    }
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
@@ -112,12 +120,12 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, infoViewModel: Inf
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 5.dp, bottom = 10.dp),
+                    .padding(top = 1.dp, bottom = 1.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 inputText(
-                    stringResource(id = R.string.firstname),
+                    stringResource(id = R.string.firstname) + "*",
                     R.drawable.round_person_24,
                     KeyboardType.Text,
                     KeyboardCapitalization.Words,
@@ -126,7 +134,7 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, infoViewModel: Inf
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 inputText(
-                    stringResource(id = R.string.lastname),
+                    stringResource(id = R.string.lastname) + "*",
                     R.drawable.round_person_add_24,
                     KeyboardType.Text,
                     KeyboardCapitalization.Words,
@@ -134,22 +142,20 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, infoViewModel: Inf
                     onValueChange = { infoViewModel.setLastName(it) }
                 )
             }
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 10.dp),
+                    .padding(bottom = 2.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
 
                 ) {
                 radioGender()
             }
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 10.dp),
+                    .padding(bottom = 2.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -170,12 +176,27 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, infoViewModel: Inf
                 modifier = Modifier
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(id = R.string.required_fields),
+                    fontSize = 11.sp,
+                    color = colorTittle,
+                    modifier = Modifier
+                        .padding(top = 15.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
-            )
-            {
+            ) {
                 val colorBack = Color(0xffa1cafe)
                 val colorText = Color(0xff043f8a)
                 Button(
+                    enabled = validation,
                     onClick = {
                         onNextButton(2)
                         Log.i(
@@ -215,9 +236,11 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, infoViewModel: Inf
     }
 }
 
-
 @Composable
-fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, infoViewModel: InfoViewModel = viewModel()) {
+fun personalDataVerticalLayout(
+    onNextButton: (Int) -> Unit,
+    infoViewModel: InfoViewModel = viewModel()
+) {
     val infoUiState by infoViewModel.uiState.collectAsState()
 
     val screenTitle = stringResource(id = R.string.personal_data_title)
@@ -226,6 +249,14 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, infoViewModel: InfoV
     val gender = stringResource(id = R.string.gender)
     val birthdate = stringResource(id = R.string.birthdate)
     val scholarship = stringResource(id = R.string.scolarity)
+    var validation by remember {
+        mutableStateOf(false)
+    }
+    DisposableEffect(infoUiState.firstName, infoUiState.lastName, infoUiState.birthdate) {
+        validation =
+            !infoUiState.firstName.isNullOrEmpty() and !infoUiState.lastName.isNullOrEmpty() and !infoUiState.birthdate.isNullOrEmpty()
+        onDispose { }
+    }
 
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
@@ -251,7 +282,7 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, infoViewModel: InfoV
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 inputText(
-                    stringResource(id = R.string.firstname),
+                    stringResource(id = R.string.firstname) + "*",
                     R.drawable.round_person_24,
                     KeyboardType.Text,
                     KeyboardCapitalization.Words,
@@ -266,7 +297,7 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, infoViewModel: InfoV
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 inputText(
-                    stringResource(id = R.string.lastname),
+                    stringResource(id = R.string.lastname) + "*",
                     R.drawable.round_person_add_24,
                     KeyboardType.Text,
                     KeyboardCapitalization.Words,
@@ -303,6 +334,23 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, infoViewModel: InfoV
             }
             Row(
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                Text(
+                    text = stringResource(id = R.string.required_fields),
+                    fontSize = 11.sp,
+                    color = colorTittle,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 15.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+            Row(
+                modifier = Modifier
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             )
@@ -310,6 +358,7 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, infoViewModel: InfoV
                 Spacer(Modifier.weight(1f))
                 val colorBack = Color(0xffa1cafe)
                 val colorText = Color(0xff043f8a)
+
                 Button(
                     onClick = {
                         onNextButton(2)
@@ -338,7 +387,8 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, infoViewModel: InfoV
                         end = 20.dp,
                         bottom = 12.dp
                     ),
-                    colors = ButtonDefaults.buttonColors(containerColor = colorBack)
+                    colors = ButtonDefaults.buttonColors(containerColor = colorBack),
+                    enabled = validation
                 ) {
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                     Text(
@@ -462,7 +512,7 @@ fun selectBirthday() {
         tint = colorIcon
     )
     Spacer(modifier = Modifier.width(20.dp))
-    Text(text = stringResource(id = R.string.birthdate))
+    Text(text = stringResource(id = R.string.birthdate) + "*")
     Spacer(modifier = Modifier.width(16.dp))
     selectDatePicker();
 }

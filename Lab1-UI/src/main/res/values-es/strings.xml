@@ -24,4 +24,5 @@
     <string name="select_button">Seleccionar</string>
     <string name="next_button">Siguiente</string>
     <string name="save_button">Guardar</string>
+    <string name="required_fields">Los campos marcados con * son obligatorios</string>
 </resources>

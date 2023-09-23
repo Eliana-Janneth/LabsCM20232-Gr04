@@ -42,6 +42,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -83,6 +84,7 @@ fun ContactDataScreen(viewModel: InfoViewModel) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             contactDataHorizontalLayout(viewModel)
         }
+
         else -> {
             contactDataVerticalLayout(viewModel)
         }
@@ -98,6 +100,14 @@ fun contactDataHorizontalLayout(infoViewModel: InfoViewModel = viewModel()) {
     val country = stringResource(id = R.string.country)
     val city = stringResource(id = R.string.city)
     val address = stringResource(id = R.string.address)
+    var validation by remember {
+        mutableStateOf(false)
+    }
+    DisposableEffect(infoUiState.phone, infoUiState.email, infoUiState.country) {
+        validation =
+            !infoUiState.phone.isNullOrEmpty() and !infoUiState.email.isNullOrEmpty() and !infoUiState.country.isNullOrEmpty()
+        onDispose { }
+    }
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
@@ -121,7 +131,7 @@ fun contactDataHorizontalLayout(infoViewModel: InfoViewModel = viewModel()) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 inputText(
-                    phone,
+                    phone+"*",
                     R.drawable.round_local_phone_24,
                     KeyboardType.Number,
                     KeyboardCapitalization.None,
@@ -130,12 +140,12 @@ fun contactDataHorizontalLayout(infoViewModel: InfoViewModel = viewModel()) {
                 )
                 Spacer(modifier = Modifier.width(15.dp))
                 inputText(
-                    email,
+                    email+"*",
                     R.drawable.round_email_24,
                     KeyboardType.Email,
                     KeyboardCapitalization.None,
                     infoUiState.email,
-                    onValueChange = {infoViewModel.setEmail(it)}
+                    onValueChange = { infoViewModel.setEmail(it) }
                 )
             }
             listHorizontalCountryDropdown()
@@ -151,7 +161,22 @@ fun contactDataHorizontalLayout(infoViewModel: InfoViewModel = viewModel()) {
                     KeyboardType.Text,
                     KeyboardCapitalization.Sentences,
                     infoUiState.address,
-                    onValueChange = {infoViewModel.setAddress(it)}
+                    onValueChange = { infoViewModel.setAddress(it) }
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(id = R.string.required_fields),
+                    fontSize = 11.sp,
+                    color = colorTittle,
+                    modifier = Modifier
+                        .padding(top = 15.dp),
+                    textAlign = TextAlign.Center
                 )
             }
             Row(
@@ -164,6 +189,7 @@ fun contactDataHorizontalLayout(infoViewModel: InfoViewModel = viewModel()) {
                 val colorBack = Color(0xffa1cafe)
                 val colorText = Color(0xff043f8a)
                 Button(
+                    enabled = validation,
                     onClick = {
                         Log.i(
                             "", "${screenTitle.uppercase()}\n" +
@@ -211,6 +237,14 @@ fun contactDataVerticalLayout(infoViewModel: InfoViewModel = viewModel()) {
     val country = stringResource(id = R.string.country)
     val city = stringResource(id = R.string.city)
     val address = stringResource(id = R.string.address)
+    var validation by remember {
+        mutableStateOf(false)
+    }
+    DisposableEffect(infoUiState.phone, infoUiState.email, infoUiState.country) {
+        validation =
+            !infoUiState.phone.isNullOrEmpty() and !infoUiState.email.isNullOrEmpty() and !infoUiState.country.isNullOrEmpty()
+        onDispose { }
+    }
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
@@ -233,12 +267,12 @@ fun contactDataVerticalLayout(infoViewModel: InfoViewModel = viewModel()) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 inputText(
-                    phone,
+                    phone+"*",
                     R.drawable.round_local_phone_24,
                     KeyboardType.Number,
                     KeyboardCapitalization.None,
                     infoUiState.phone,
-                    onValueChange = { infoViewModel.setPhone(it)}
+                    onValueChange = { infoViewModel.setPhone(it) }
                 )
             }
             Row(
@@ -247,12 +281,12 @@ fun contactDataVerticalLayout(infoViewModel: InfoViewModel = viewModel()) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 inputText(
-                    email,
+                    email+"*",
                     R.drawable.round_email_24,
                     KeyboardType.Email,
                     KeyboardCapitalization.None,
                     infoUiState.email,
-                    onValueChange = {infoViewModel.setEmail(it)}
+                    onValueChange = { infoViewModel.setEmail(it) }
                 )
             }
             Spacer(modifier = Modifier.width(20.dp))
@@ -260,8 +294,8 @@ fun contactDataVerticalLayout(infoViewModel: InfoViewModel = viewModel()) {
             listVerticalCountryDropdown(
                 infoUiState.country,
                 infoUiState.city,
-                onChangeCountry = {infoViewModel.setCountry(it)},
-                onChangeCity = {infoViewModel.setCity(it)},
+                onChangeCountry = { infoViewModel.setCountry(it) },
+                onChangeCity = { infoViewModel.setCity(it) },
             )
 
             Row(
@@ -275,9 +309,25 @@ fun contactDataVerticalLayout(infoViewModel: InfoViewModel = viewModel()) {
                     KeyboardType.Text,
                     KeyboardCapitalization.Sentences,
                     infoUiState.address,
-                    onValueChange = {infoViewModel.setAddress(it)}
+                    onValueChange = { infoViewModel.setAddress(it) }
                 )
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(id = R.string.required_fields),
+                    fontSize = 11.sp,
+                    color = colorTittle,
+                    modifier = Modifier
+                        .padding(top = 15.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -288,6 +338,7 @@ fun contactDataVerticalLayout(infoViewModel: InfoViewModel = viewModel()) {
                 val colorBack = Color(0xffa1cafe)
                 val colorText = Color(0xff043f8a)
                 Button(
+                    enabled = validation,
                     onClick = {
                         Log.i(
                             "", "${screenTitle.uppercase()}\n" +
@@ -336,7 +387,6 @@ fun contactDataVerticalLayout(infoViewModel: InfoViewModel = viewModel()) {
 @Composable
 fun listHorizontalCountryDropdown(infoViewModel: InfoViewModel = viewModel()) {
     val infoUiState by infoViewModel.uiState.collectAsState()
-
     var selectedCountry by remember { mutableStateOf<CountryData?>(null) }
     var selectedCity by remember { mutableStateOf<String?>(null) }
     var countries by remember { mutableStateOf<List<CountryData>>(emptyList()) }
@@ -399,7 +449,7 @@ fun listHorizontalCountryDropdown(infoViewModel: InfoViewModel = viewModel()) {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCountryExpanded)
                     },
                     placeholder = {
-                        Text(text = labelCountry)
+                        Text(text = labelCountry+"*")
                     },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         textColor = colorText,
@@ -426,6 +476,7 @@ fun listHorizontalCountryDropdown(infoViewModel: InfoViewModel = viewModel()) {
                                 isCountryExpanded = false
                                 cities = country.cities
                                 infoViewModel.setCountry(country.country)
+                                infoViewModel.setCity("")
                             }
                         )
                     }
@@ -552,7 +603,7 @@ fun listVerticalCountryDropdown(
                 TextField(
                     value = selectedCountry?.country ?: "", onValueChange = {}, readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCountryExpanded) },
-                    placeholder = { Text(text = labelCountry) },
+                    placeholder = { Text(text = labelCountry+"*") },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         textColor = colorText,
                         focusedIndicatorColor = Color.Transparent,
