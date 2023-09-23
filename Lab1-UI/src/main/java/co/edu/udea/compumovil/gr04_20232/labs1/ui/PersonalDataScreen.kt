@@ -5,6 +5,7 @@ package co.edu.udea.compumovil.gr04_20232.labs1.ui
 import android.app.DatePickerDialog
 import android.content.res.Configuration
 import android.icu.util.Calendar
+import android.util.Log
 import android.widget.DatePicker
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
@@ -61,6 +62,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.toUpperCase
 import co.edu.udea.compumovil.gr04_20232.labs1.InfoViewModel
 import co.edu.udea.compumovil.gr04_20232.labs1.R
 
@@ -71,9 +73,11 @@ fun PersonalDataScreen(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
         Configuration.ORIENTATION_LANDSCAPE -> {
             personalDataHorizontalLayout(onNextButton, viewModel)
         }
+
         Configuration.ORIENTATION_PORTRAIT -> {
             personalDataVerticalLayout(onNextButton, viewModel)
         }
+
         else -> {
             personalDataVerticalLayout(onNextButton, viewModel)
         }
@@ -83,6 +87,12 @@ fun PersonalDataScreen(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
+    val screenTitle = stringResource(id = R.string.personal_data_title)
+    val firstname = stringResource(id = R.string.firstname)
+    val lastName = stringResource(id = R.string.lastname)
+    val gender = stringResource(id = R.string.gender)
+    val birthdate = stringResource(id = R.string.birthdate)
+    val scolarity = stringResource(id = R.string.scolarity)
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
@@ -174,6 +184,23 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
                 Button(
                     onClick = {
                         onNextButton(2)
+                        Log.i(
+                            "", "${screenTitle.uppercase()}\n" +
+                                    "---------------------------------------\n" +
+                                    "$firstname= ${viewModel.firstName}\n" +
+                                    "$lastName = ${viewModel.lastName}\n" +
+                                    if (!viewModel.gender.isEmpty()) {
+                                        "$gender = ${viewModel.gender}\n"
+                                    } else {
+                                        ""
+                                    }
+                                    + "$birthdate = ${viewModel.birthdate}\n" +
+                                    if (!viewModel.scolarity.isEmpty()) {
+                                        "$scolarity = ${viewModel.scolarity}\n"
+                                    } else {
+                                        ""
+                                    }
+                        )
                     },
                     modifier = Modifier.padding(end = 100.dp, bottom = 20.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = colorBack)
@@ -197,6 +224,13 @@ fun personalDataHorizontalLayout(onNextButton: (Int) -> Unit, viewModel: InfoVie
 
 @Composable
 fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewModel) {
+    val screenTitle = stringResource(id = R.string.personal_data_title)
+    val firstname = stringResource(id = R.string.firstname)
+    val lastName = stringResource(id = R.string.lastname)
+    val gender = stringResource(id = R.string.gender)
+    val birthdate = stringResource(id = R.string.birthdate)
+    val scolarity = stringResource(id = R.string.scolarity)
+
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
@@ -287,6 +321,23 @@ fun personalDataVerticalLayout(onNextButton: (Int) -> Unit, viewModel: InfoViewM
                 Button(
                     onClick = {
                         onNextButton(2)
+                        Log.i(
+                            "", "${screenTitle.uppercase()}\n" +
+                                    "---------------------------------------\n" +
+                                    "$firstname= ${viewModel.firstName}\n" +
+                                    "$lastName = ${viewModel.lastName}\n" +
+                                    if (!viewModel.gender.isEmpty()) {
+                                        "$gender = ${viewModel.gender}\n"
+                                    } else {
+                                        ""
+                                    }
+                                    + "$birthdate = ${viewModel.birthdate}\n" +
+                                    if (!viewModel.scolarity.isEmpty()) {
+                                        "$scolarity = ${viewModel.scolarity}\n"
+                                    } else {
+                                        ""
+                                    }
+                        )
                     },
                     modifier = Modifier.padding(30.dp),
                     contentPadding = PaddingValues(
@@ -334,11 +385,13 @@ fun inputText(
                 .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
                 .fillMaxWidth()
         }
+
         Configuration.ORIENTATION_LANDSCAPE -> {
             Modifier
                 .padding(8.dp)
                 .height(60.dp)
         }
+
         else -> {
             Modifier
                 .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = 20.dp)
@@ -521,7 +574,7 @@ fun schoolDropdownMenu(viewModel: InfoViewModel) {
                 cursorColor = colorText,
                 containerColor = colorBack,
                 focusedLabelColor = colorLabel,
-                ),
+            ),
             modifier = Modifier.menuAnchor()
         )
         ExposedDropdownMenu(
@@ -530,7 +583,12 @@ fun schoolDropdownMenu(viewModel: InfoViewModel) {
                 isExpanded = false
             }
         ) {
-            val items = listOf(stringResource(id = R.string.scolarity_primary), stringResource(id = R.string.scolarity_secundary), stringResource(id = R.string.scolarity_bachelor), stringResource(id = R.string.scolarity_other))
+            val items = listOf(
+                stringResource(id = R.string.scolarity_primary),
+                stringResource(id = R.string.scolarity_secundary),
+                stringResource(id = R.string.scolarity_bachelor),
+                stringResource(id = R.string.scolarity_other)
+            )
             items.forEach { item ->
                 DropdownMenuItem(
                     onClick = {
@@ -543,44 +601,44 @@ fun schoolDropdownMenu(viewModel: InfoViewModel) {
                     }
                 )
             }
-/*
-            DropdownMenuItem(
-                text = {
-                    Text(text = stringResource(id = R.string.scolarity_primary))
-                },
-                onClick = {
-                    grade = labelScolarityPrimary
-                    isExpanded = false
-                }
-            )
-            DropdownMenuItem(
-                text = {
-                    Text(text = stringResource(id = R.string.scolarity_secundary))
-                },
-                onClick = {
-                    grade = labelScolaritySecundary
-                    isExpanded = false
-                }
-            )
-            DropdownMenuItem(
-                text = {
-                    Text(text = stringResource(id = R.string.scolarity_bachelor))
-                },
-                onClick = {
-                    grade = labelScolarityBachelor
-                    isExpanded = false
-                }
-            )
+            /*
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = stringResource(id = R.string.scolarity_primary))
+                            },
+                            onClick = {
+                                grade = labelScolarityPrimary
+                                isExpanded = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = stringResource(id = R.string.scolarity_secundary))
+                            },
+                            onClick = {
+                                grade = labelScolaritySecundary
+                                isExpanded = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = stringResource(id = R.string.scolarity_bachelor))
+                            },
+                            onClick = {
+                                grade = labelScolarityBachelor
+                                isExpanded = false
+                            }
+                        )
 
-            DropdownMenuItem(
-                text = {
-                    Text(text = stringResource(id = R.string.scolarity_other))
-                },
-                onClick = {
-                    grade = labelScolarityOther
-                    isExpanded = false
-                }
-            )*/
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = stringResource(id = R.string.scolarity_other))
+                            },
+                            onClick = {
+                                grade = labelScolarityOther
+                                isExpanded = false
+                            }
+                        )*/
         }
     }
 }

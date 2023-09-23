@@ -94,6 +94,12 @@ fun ContactDataScreen(viewModel: InfoViewModel) {
 
 @Composable
 fun contactDataHorizontalLayout(viewModel: InfoViewModel) {
+    val screenTitle = stringResource(id = R.string.contact_data_title)
+    val phone = stringResource(id = R.string.phone)
+    val email = stringResource(id = R.string.email)
+    val country = stringResource(id = R.string.country)
+    val city = stringResource(id = R.string.city)
+    val address = stringResource(id = R.string.address)
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
@@ -167,7 +173,23 @@ fun contactDataHorizontalLayout(viewModel: InfoViewModel) {
                 val colorText = Color(0xff043f8a)
                 Button(
                     onClick = {
-                        //TODO: Agregar función para imprimir datos
+                        Log.i(
+                            "", "${screenTitle.uppercase()}\n" +
+                                    "---------------------------------------\n" +
+                                    "$phone = ${viewModel.phone}\n" +
+                                    "$email = ${viewModel.email}\n" +
+                                    "$country = ${viewModel.country}\n" +
+                                    if (!viewModel.city.isEmpty()) {
+                                        "$city = ${viewModel.city}\n"
+                                    } else {
+                                        ""
+                                    } +
+                                    if (!viewModel.address.isEmpty()) {
+                                        "$address = ${viewModel.address}\n"
+                                    } else {
+                                        ""
+                                    }
+                        )
                     },
                     modifier = Modifier.padding(end = 50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = colorBack)
@@ -191,6 +213,12 @@ fun contactDataHorizontalLayout(viewModel: InfoViewModel) {
 
 @Composable
 fun contactDataVerticalLayout(viewModel: InfoViewModel) {
+    val screenTitle = stringResource(id = R.string.contact_data_title)
+    val phone = stringResource(id = R.string.phone)
+    val email = stringResource(id = R.string.email)
+    val country = stringResource(id = R.string.country)
+    val city = stringResource(id = R.string.city)
+    val address = stringResource(id = R.string.address)
     BoxWithConstraints {
         val colorBackground = Color(0xffbfdbff)
         val colorTittle = Color(0xff164583)
@@ -268,7 +296,23 @@ fun contactDataVerticalLayout(viewModel: InfoViewModel) {
                 val colorText = Color(0xff043f8a)
                 Button(
                     onClick = {
-                        //TODO: Agregar función para imprimir datos
+                        Log.i(
+                            "", "${screenTitle.uppercase()}\n" +
+                                    "---------------------------------------\n" +
+                                    "$phone = ${viewModel.phone}\n" +
+                                    "$email = ${viewModel.email}\n" +
+                                    "$country = ${viewModel.country}\n" +
+                                    if (!viewModel.city.isEmpty()) {
+                                        "$city = ${viewModel.city}\n"
+                                    } else {
+                                        ""
+                                    } +
+                                    if (!viewModel.address.isEmpty()) {
+                                        "$address = ${viewModel.address}\n"
+                                    } else {
+                                        ""
+                                    }
+                        )
                     },
                     modifier = Modifier.padding(30.dp),
                     contentPadding = PaddingValues(
@@ -309,8 +353,8 @@ fun listHorizontalCountryDropdown(viewModel: InfoViewModel) {
     val colorBack = Color(0xffa1cafe)
     val colorLabel = Color(0xff002a61)
     val colorIcon = Color(0xff164583)
-    val labelCountry:String
-    val labelCity:String
+    val labelCountry: String
+    val labelCity: String
     if (viewModel.country.isNullOrEmpty()) {
         labelCountry = stringResource(id = R.string.country)
     } else {
@@ -463,8 +507,8 @@ fun listVerticalCountryDropdown(viewModel: InfoViewModel) {
     val colorBack = Color(0xffa1cafe)
     val colorLabel = Color(0xff002a61)
     val colorIcon = Color(0xff164583)
-    val labelCountry:String
-    val labelCity:String
+    val labelCountry: String
+    val labelCity: String
     if (viewModel.country.isNullOrEmpty()) {
         labelCountry = stringResource(id = R.string.country)
     } else {
