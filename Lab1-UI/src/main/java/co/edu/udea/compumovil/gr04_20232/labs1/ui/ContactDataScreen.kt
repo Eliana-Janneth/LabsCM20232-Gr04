@@ -131,7 +131,7 @@ fun contactDataHorizontalLayout(infoViewModel: InfoViewModel = viewModel()) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 inputText(
-                    phone+"*",
+                    phone + "*",
                     R.drawable.round_local_phone_24,
                     KeyboardType.Number,
                     KeyboardCapitalization.None,
@@ -140,7 +140,7 @@ fun contactDataHorizontalLayout(infoViewModel: InfoViewModel = viewModel()) {
                 )
                 Spacer(modifier = Modifier.width(15.dp))
                 inputText(
-                    email+"*",
+                    email + "*",
                     R.drawable.round_email_24,
                     KeyboardType.Email,
                     KeyboardCapitalization.None,
@@ -148,7 +148,12 @@ fun contactDataHorizontalLayout(infoViewModel: InfoViewModel = viewModel()) {
                     onValueChange = { infoViewModel.setEmail(it) }
                 )
             }
-            listHorizontalCountryDropdown()
+            listHorizontalCountryDropdown(
+                infoUiState.country,
+                infoUiState.city,
+                onChangeCountry = { infoViewModel.setCountry(it) },
+                onChangeCity = { infoViewModel.setCity(it) },
+            )
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -267,7 +272,7 @@ fun contactDataVerticalLayout(infoViewModel: InfoViewModel = viewModel()) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 inputText(
-                    phone+"*",
+                    phone + "*",
                     R.drawable.round_local_phone_24,
                     KeyboardType.Number,
                     KeyboardCapitalization.None,
@@ -281,7 +286,7 @@ fun contactDataVerticalLayout(infoViewModel: InfoViewModel = viewModel()) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 inputText(
-                    email+"*",
+                    email + "*",
                     R.drawable.round_email_24,
                     KeyboardType.Email,
                     KeyboardCapitalization.None,
@@ -385,8 +390,12 @@ fun contactDataVerticalLayout(infoViewModel: InfoViewModel = viewModel()) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun listHorizontalCountryDropdown(infoViewModel: InfoViewModel = viewModel()) {
-    val infoUiState by infoViewModel.uiState.collectAsState()
+fun listHorizontalCountryDropdown(
+    countryValue: String,
+    cityValue: String,
+    onChangeCountry: (String) -> Unit,
+    onChangeCity: (String) -> Unit
+) {
     var selectedCountry by remember { mutableStateOf<CountryData?>(null) }
     var selectedCity by remember { mutableStateOf<String?>(null) }
     var countries by remember { mutableStateOf<List<CountryData>>(emptyList()) }
@@ -399,15 +408,15 @@ fun listHorizontalCountryDropdown(infoViewModel: InfoViewModel = viewModel()) {
     val colorIcon = Color(0xff164583)
     val labelCountry: String
     val labelCity: String
-    if (infoUiState.country.isNullOrEmpty()) {
-        labelCountry = stringResource(id = R.string.country)
+    if (countryValue.isNullOrEmpty()) {
+        labelCountry = stringResource(id = R.string.country)+"*"
     } else {
-        labelCountry = infoUiState.country
+        labelCountry = countryValue
     }
-    if (infoUiState.city.isNullOrEmpty()) {
+    if (cityValue.isNullOrEmpty()) {
         labelCity = stringResource(id = R.string.city)
     } else {
-        labelCity = infoUiState.city
+        labelCity = cityValue
     }
 
     LaunchedEffect(Unit) {
@@ -449,7 +458,7 @@ fun listHorizontalCountryDropdown(infoViewModel: InfoViewModel = viewModel()) {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCountryExpanded)
                     },
                     placeholder = {
-                        Text(text = labelCountry+"*")
+                        Text(text = labelCountry)
                     },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         textColor = colorText,
@@ -475,8 +484,7 @@ fun listHorizontalCountryDropdown(infoViewModel: InfoViewModel = viewModel()) {
                                 selectedCountry = country
                                 isCountryExpanded = false
                                 cities = country.cities
-                                infoViewModel.setCountry(country.country)
-                                infoViewModel.setCity("")
+                                onChangeCountry(country.country)
                             }
                         )
                     }
@@ -529,7 +537,7 @@ fun listHorizontalCountryDropdown(infoViewModel: InfoViewModel = viewModel()) {
                             onClick = {
                                 selectedCity = city
                                 isCityExpanded = false
-                                infoViewModel.setCity(city)
+                                onChangeCity(city)
                             }
                         )
                     }
@@ -560,7 +568,7 @@ fun listVerticalCountryDropdown(
     val labelCountry: String
     val labelCity: String
     if (countryValue.isNullOrEmpty()) {
-        labelCountry = stringResource(id = R.string.country)
+        labelCountry = stringResource(id = R.string.country)+"*"
     } else {
         labelCountry = countryValue
     }
@@ -603,7 +611,7 @@ fun listVerticalCountryDropdown(
                 TextField(
                     value = selectedCountry?.country ?: "", onValueChange = {}, readOnly = true,
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCountryExpanded) },
-                    placeholder = { Text(text = labelCountry+"*") },
+                    placeholder = { Text(text = labelCountry) },
                     colors = ExposedDropdownMenuDefaults.textFieldColors(
                         textColor = colorText,
                         focusedIndicatorColor = Color.Transparent,
